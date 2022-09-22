@@ -128,7 +128,7 @@ class StarPilotGame : public BasicAbstractGame {
 
         if (obj->type == FINISH_LINE) {
             step_data.done = true;
-            step_data.reward += COMPLETION_BONUS;
+            step_data.reward += starpilot_context_option->completion_bonus;
             step_data.level_complete = true;
         } else if (is_lethal(obj)) {
             step_data.done = true;
@@ -184,10 +184,17 @@ class StarPilotGame : public BasicAbstractGame {
         } else {
             fassert(false);
         }
+        maxspeed = starpilot_context_option->maxspeed;
 
         for (int i = 0; i < NUM_BASIC_OBJECTS; i++) {
             hp_bullet_r[i] = default_bullet_r;
         }
+
+        hp_object_prob_weight[FLYER] = starpilot_context_option->flyer_prob_weight;
+        hp_object_prob_weight[FAST_FLYER] = starpilot_context_option->fastflyer_prob_weight;
+        hp_object_prob_weight[METEOR] = starpilot_context_option->meteor_prob_weight;
+        hp_object_prob_weight[CLOUD] = starpilot_context_option->cloud_prob_weight;
+        hp_object_prob_weight[TURRET] = starpilot_context_option->turret_prob_weight;
 
         hp_healths[METEOR] = 500;
 
@@ -204,13 +211,17 @@ class StarPilotGame : public BasicAbstractGame {
 
         hp_slow_v = .5;
         hp_max_group_size = 5;
+        hp_max_group_size = starpilot_context_option->max_group_size;
 
         hp_weapon_bullet_dist = 3;
 
         hp_min_enemy_delta_t = 10;
         hp_max_enemy_delta_t = hp_min_enemy_delta_t + 20;
+        hp_min_enemy_delta_t = starpilot_context_option->min_enemy_delta_t;
+        hp_max_enemy_delta_t = starpilot_context_option->max_enemy_delta_t;
 
         hp_spawn_right_threshold = 0.9f;
+        hp_spawn_right_threshold = 1 - starpilot_context_option->left_prob;
 
         hp_object_prob_weight[BULLET_PLAYER] = 0;
         hp_object_prob_weight[BULLET2] = 0;
@@ -225,8 +236,12 @@ class StarPilotGame : public BasicAbstractGame {
 
     void add_spawners() {
         int t = 1 + rand_gen.randint(hp_min_enemy_delta_t, hp_max_enemy_delta_t);
+        t = starpilot_context_option->min_time > t ? starpilot_context_option->min_time : t;
+        t = starpilot_context_option->max_time < t ? starpilot_context_option->max_time : t;
+        ((int32_t *) e_context.items[0].data)[0] = t;
 
         bool can_spawn_left = options.distribution_mode != EasyMode;
+        can_spawn_left = starpilot_context_option->can_spawn_left;
 
         for (int i = 0; t <= SHOOTER_WIN_TIME; i++) {
             int group_size = 1;
@@ -327,6 +342,10 @@ class StarPilotGame : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        starpilot_context_option->copy_options((StarpilotContextOption *) assigned_context_option);
+        timeout = starpilot_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
         options.center_agent = false;
@@ -393,7 +412,7 @@ class StarPilotGame : public BasicAbstractGame {
             if (m->health <= 0 && is_destructible(m->type) && !m->will_erase) {
                 spawn_child(m, EXPLOSION, .5 * m->rx, true);
 
-                step_data.reward += ENEMY_REWARD;
+                step_data.reward += starpilot_context_option->enemy_reward;
                 m->will_erase = true;
             }
         }

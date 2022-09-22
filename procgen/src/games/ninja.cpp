@@ -80,7 +80,7 @@ class Ninja : public BasicAbstractGame {
         if (obj->type == EXPLOSION) {
             step_data.done = true;
         } else if (obj->type == GOAL) {
-            step_data.reward += GOAL_REWARD;
+            step_data.reward += ninja_context_option->goal_reward;
             step_data.level_complete = true;
             step_data.done = true;
         }
@@ -207,13 +207,20 @@ class Ninja : public BasicAbstractGame {
 
         float bomb_prob = .25 * (difficulty - 1);
         int max_gap_inc = difficulty == 1 ? 1 : 2;
+        max_gap_inc = ninja_context_option->max_gap_inc;
+
+        // bomb_prob = ninja_context_option->bomb_prob;
 
         int num_sections = rand_gen.randn(difficulty) + difficulty;
+        num_sections = ninja_context_option->max_num_sections < num_sections ? ninja_context_option->max_num_sections : num_sections; 
+        num_sections = ninja_context_option->min_num_sections > num_sections ? ninja_context_option->min_num_sections : num_sections;
         int start_x = 5;
         int curr_x = start_x;
         int curr_y = main_height / 2;
         int min_y = curr_y;
 
+        ((int32_t *) e_context.items[0].data)[0] = difficulty;
+        ((int32_t *) e_context.items[1].data)[0] = num_sections;
         int w = main_width;
 
         float _max_dy = max_jump * max_jump / (2 * gravity);
@@ -305,6 +312,10 @@ class Ninja : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        ninja_context_option->copy_options((NinjaContextOption *) assigned_context_option);
+        timeout = ninja_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
         gravity = 0.2f;
@@ -316,6 +327,13 @@ class Ninja : public BasicAbstractGame {
         jump_charge = 0;
         jump_charge_inc = .25;
         visibility = 16;
+
+        gravity = ninja_context_option->gravity;
+        max_jump = ninja_context_option->max_jump;
+        jump_charge_inc = ninja_context_option->jump_charge_inc;
+        air_control = ninja_context_option->air_control;
+        maxspeed = ninja_context_option->maxspeed;
+        visibility = ninja_context_option->visibility;
 
         agent->rx = .5;
         agent->ry = .5;
@@ -329,8 +347,9 @@ class Ninja : public BasicAbstractGame {
             visibility = 10;
         }
 
-        int max_difficulty = 3;
-        int difficulty = rand_gen.randn(max_difficulty) + 1;
+        int max_difficulty = ninja_context_option->max_difficulty;
+        int min_difficulty = ninja_context_option->min_difficulty;
+        int difficulty = rand_gen.randn(max_difficulty - min_difficulty + 1) + min_difficulty;
 
         last_fire_time = 0;
 

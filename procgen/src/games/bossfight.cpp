@@ -1,5 +1,6 @@
 #include "../basic-abstract-game.h"
 #include "../assetgen.h"
+#include "../context/bossfight-context-option.h"
 #include <set>
 #include <queue>
 
@@ -33,22 +34,22 @@ class BossfightGame : public BasicAbstractGame {
   public:
     std::shared_ptr<Entity> boss, shields;
     std::vector<int> attack_modes;
-    int last_fire_time = 0;
+    int last_fire_time = 0; // 上一次fire的时间（两次fire之间有间隙）
     int time_to_swap = 0;
     int invulnerable_duration = 0;
     int vulnerable_duration = 0;
-    int num_rounds = 0;
-    int round_num = 0;
-    int round_health = 0;
-    int boss_vel_timeout = 0;
-    int curr_vel_timeout = 0;
-    int attack_mode = 0;
-    int player_laser_theme = 0;
-    int boss_laser_theme = 0;
+    int num_rounds = 0;         // 总共有多少round（Boss每个有多个round的状态）
+    int round_num = 0;          // 当前是第几个round
+    int round_health = 0;       // 每个round，boss的血量
+    int boss_vel_timeout = 0;   // boss切换方向的时间间隔
+    int curr_vel_timeout = 0;   // 当前的时间间隔
+    int attack_mode = 0;        // 攻击模式
+    int player_laser_theme = 0; // 玩家的子弹皮肤
+    int boss_laser_theme = 0;   // boss的子弹皮肤
     int damaged_until_time = 0;
-    
-    bool shields_are_up = false;
-    bool barriers_moves_right = false;
+
+    bool shields_are_up = false; // 是否有护盾
+    bool barriers_moves_right = false; // 没有用到的变量
     float base_fire_prob = 0.0f;
     float boss_bullet_vel = 0.0f;
     float barrier_vel = 0.0f;
@@ -121,7 +122,7 @@ class BossfightGame : public BasicAbstractGame {
 
     bool should_draw_entity(const std::shared_ptr<Entity> &entity) override {
         if (entity->type == SHIELDS)
-            return shields_are_up;
+            return shields_are_up && bossfight_context_option->enable_shield;
 
         return BasicAbstractGame::should_draw_entity(entity);
     }
@@ -131,33 +132,33 @@ class BossfightGame : public BasicAbstractGame {
             bool will_erase = false;
 
             if (target->type == SHIELDS) {
-                if (shields_are_up) {
+                if (shields_are_up && bossfight_context_option->enable_shield) {
                     src->type = REFLECTED_BULLET;
 
                     float theta = PI * (1.25 + .5 * rand_pct);
-                    src->vy = PLAYER_BULLET_VEL * sin(theta) * .5;
-                    src->vx = PLAYER_BULLET_VEL * cos(theta) * .5;
+                    src->vy = bossfight_context_option->player_bullet_vel * sin(theta) * .5;
+                    src->vx = bossfight_context_option->player_bullet_vel * cos(theta) * .5;
                     src->expire_time = 4;
                     src->life_time = 0;
                     src->alpha_decay = 0.8f;
                 }
             } else if (target->type == BOSS) {
-                if (!shields_are_up) {
+                if (!(shields_are_up && bossfight_context_option->enable_shield)) {
                     target->health -= 1;
                     will_erase = true;
 
                     if (int(target->health) % round_health == 0) {
-                        step_data.reward += POSITIVE_REWARD;
+                        step_data.reward += bossfight_context_option->positive_reward;
 
                         if (target->health == 0) {
                             step_data.done = true;
-                            step_data.reward += COMPLETION_BONUS;
+                            step_data.reward += bossfight_context_option->completion_bonus;
                             step_data.level_complete = true;
                         } else {
                             round_num++;
                             prepare_boss();
-                            curr_vel_timeout = BOSS_DAMAGED_TIMEOUT;
-                            damaged_until_time = cur_time + BOSS_DAMAGED_TIMEOUT;
+                            curr_vel_timeout = bossfight_context_option->boss_damage_timeout;
+                            damaged_until_time = cur_time + bossfight_context_option->boss_damage_timeout;
                         }
                     }
                 }
@@ -200,25 +201,37 @@ class BossfightGame : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        bossfight_context_option->copy_options((BossfightContextOption *)assigned_context_option);
         BasicAbstractGame::game_reset();
+
+        timeout = bossfight_context_option->max_episode_steps;
 
         damaged_until_time = 0;
         last_fire_time = 0;
         boss_bullet_vel = options.distribution_mode == EasyMode ? .5 : .75;
         int max_extra_invulnerable = options.distribution_mode == EasyMode ? 1 : 3;
 
+        boss_bullet_vel = bossfight_context_option->boss_bullet_vel;
+        max_extra_invulnerable = bossfight_context_option->max_extra_invulnerable;
+
         options.center_agent = false;
 
-        boss = add_entity(main_width / 2, main_height / 2, 0, 0, BOSS_R, BOSS);
+        // 添加Boss实体
+        boss = add_entity(main_width / 2, main_height / 2, 0, 0, bossfight_context_option->boss_r, BOSS);
         choose_random_theme(boss);
         match_aspect_ratio(boss);
 
+        // 给Boss添加护盾图层
         shields = add_entity_rxy(boss->x, boss->y, 0, 0, 1.2 * boss->rx, 1.2 * boss->ry, SHIELDS);
 
-        boss_vel_timeout = BOSS_VEL_TIMEOUT;
+        // Boss改变方向的timeout
+        boss_vel_timeout = bossfight_context_option->boss_vel_timeout;
         base_fire_prob = 0.1f;
-        round_health = rand_gen.randn(9) + 1;
-        num_rounds = 1 + rand_gen.randn(5);
+        // 生成这个level的rounds数量和每个round中boss的血量
+        int health_range = bossfight_context_option->max_round_health - bossfight_context_option->min_round_health + 1;
+        round_health = rand_gen.randn(health_range) + bossfight_context_option->min_round_health;
+        int rounds_range = bossfight_context_option->max_rounds_num - bossfight_context_option->min_rounds_num + 1;
+        num_rounds = rand_gen.randn(rounds_range) + bossfight_context_option->min_rounds_num;
         invulnerable_duration = 2 + rand_gen.randn(max_extra_invulnerable + 1);
         vulnerable_duration = 500; // essentially infinite
 
@@ -231,8 +244,24 @@ class BossfightGame : public BasicAbstractGame {
 
         attack_modes.clear();
 
+        int modes_num = 0;
+        int num_map[4] = {0, 0, 0, 0};
+        if (bossfight_context_option->enable_attack_mode_0) {
+            num_map[modes_num++] = 0;
+        }
+        if (bossfight_context_option->enable_attack_mode_1) {
+            num_map[modes_num++] = 1;
+        }
+        if (bossfight_context_option->enable_attack_mode_2) {
+            num_map[modes_num++] = 2;
+        }
+        if (bossfight_context_option->enable_attack_mode_3) {
+            num_map[modes_num++] = 3;
+        }
         for (int i = 0; i < num_rounds; i++) {
-            attack_modes.push_back(rand_gen.randn(NUM_ATTACK_MODES));
+            attack_modes.push_back(
+                num_map[rand_gen.randn(modes_num)]
+            );
         }
 
         round_num = 0;
@@ -253,6 +282,8 @@ class BossfightGame : public BasicAbstractGame {
         //     spawn_barriers();
         //     step_entities(entities);
         // }
+        ((int32_t *)e_context.items[0].data)[0] = round_health;
+        ((int32_t *)e_context.items[1].data)[0] = num_rounds;
     }
 
     void boss_fire(float bullet_r, float vel, float theta) {
@@ -269,6 +300,7 @@ class BossfightGame : public BasicAbstractGame {
     }
 
     void attack_mode_0() {
+        // 每过8个frame发射五颗向前的子弹
         if (cur_time % 8 == 0) {
             for (int i = 0; i < 5; i++) {
                 boss_fire(.5, boss_bullet_vel, PI * 1.5 + (i - 2) * PI / 8);
@@ -277,6 +309,7 @@ class BossfightGame : public BasicAbstractGame {
     }
 
     void attack_mode_1() {
+        // 每过5个frame发射四颗子弹，方向为360度四等分，每过一定的frame后会微幅改变方向
         int dt = 5;
         if (cur_time % dt == 0) {
             int k = cur_time / dt;
@@ -288,6 +321,7 @@ class BossfightGame : public BasicAbstractGame {
     }
 
     void attack_mode_2() {
+        // 每过10个frame发射8颗子弹，方向为360度八等分
         if (cur_time % 10 == 0) {
             int num_bullets = 8;
             float offset = rand_pct * 2 * PI;
@@ -300,6 +334,7 @@ class BossfightGame : public BasicAbstractGame {
     }
 
     void attack_mode_3() {
+        // 每过4个frame发射一颗子弹，方向为随机
         if (cur_time % 4 == 0) {
             boss_fire(.5, boss_bullet_vel, PI * (1 + rand_pct));
         }
@@ -326,11 +361,14 @@ class BossfightGame : public BasicAbstractGame {
     }
 
     void spawn_barriers() {
-        int num_barriers = rand_gen.randn(3) + 1;
+        // 生成陨石障碍物
+        int barriers_range = bossfight_context_option->max_barriers_num - bossfight_context_option->min_barriers_num + 1;
+        int num_barriers = rand_gen.randn(barriers_range) + bossfight_context_option->min_barriers_num ;
+        ((int32_t *)e_context.items[2].data)[0] = num_barriers;
         for (int i = 0; i < num_barriers; i++) {
             float barrier_r = 0.6f;
             float min_barrier_y = 2 * agent->ry + barrier_r + .5;
-            float ent_y = rand_gen.rand01() * (BOTTOM_MARGIN - min_barrier_y - barrier_r) + min_barrier_y;
+            float ent_y = rand_gen.rand01() * (bossfight_context_option->bottom_margin - min_barrier_y - barrier_r) + min_barrier_y;
             float ent_x = rand_gen.rand01() * (main_width - 2 * barrier_r) + barrier_r;
 
             auto ent = std::make_shared<Entity>(ent_x, ent_y, 0, 0, barrier_r, BARRIER);
@@ -349,7 +387,7 @@ class BossfightGame : public BasicAbstractGame {
         BasicAbstractGame::game_step();
 
         // spawn_barriers();
-
+        // 将shields的位置设置为boss的位置
         shields->x = boss->x;
         shields->y = boss->y;
 
@@ -359,8 +397,9 @@ class BossfightGame : public BasicAbstractGame {
         rand_pct_y = rand_gen.rand01();
 
         if (curr_vel_timeout <= 0) {
-            float dest_x = rand_pct_x * (main_width - 2 * BOSS_R) + BOSS_R;
-            float dest_y = rand_pct_y * (main_height - 2 * BOSS_R - BOTTOM_MARGIN) + BOSS_R + BOTTOM_MARGIN;
+            // 当boss的一次移动超时候，重新设置移动方向
+            float dest_x = rand_pct_x * (main_width - 2 * bossfight_context_option->boss_r) + bossfight_context_option->boss_r;
+            float dest_y = rand_pct_y * (main_height - 2 * bossfight_context_option->boss_r - bossfight_context_option->bottom_margin) + bossfight_context_option->boss_r + bossfight_context_option->bottom_margin;
             boss->vx = (dest_x - boss->x) / boss_vel_timeout;
             boss->vy = (dest_y - boss->y) / boss_vel_timeout;
             curr_vel_timeout = boss_vel_timeout;
@@ -368,7 +407,7 @@ class BossfightGame : public BasicAbstractGame {
             if (time_to_swap > 0) {
                 time_to_swap -= 1;
             } else {
-                if (shields_are_up) {
+                if (shields_are_up && bossfight_context_option->enable_shield) {
                     time_to_swap = vulnerable_duration;
                 } else {
                     time_to_swap = invulnerable_duration;
@@ -381,7 +420,8 @@ class BossfightGame : public BasicAbstractGame {
         }
 
         if (special_action == 1 && (cur_time - last_fire_time) >= 3) {
-            auto new_bullet = add_entity(agent->x, agent->y, 0, PLAYER_BULLET_VEL, .25, PLAYER_BULLET);
+            // 生成agent的子弹， agent对物体进行fire
+            auto new_bullet = add_entity(agent->x, agent->y, 0, bossfight_context_option->player_bullet_vel, .25, PLAYER_BULLET);
             new_bullet->image_theme = player_laser_theme;
             new_bullet->collides_with_entities = true;
             new_bullet->expire_time = 25;
@@ -389,14 +429,17 @@ class BossfightGame : public BasicAbstractGame {
         }
 
         if (damaged_until_time >= cur_time) {
+            // damage模式，boss将会出现爆炸效果
             damaged_mode();
         } else if (shields_are_up) {
+            // shields是可见的
             active_attack();
         } else {
             passive_attack_mode();
         }
 
         for (int i = (int)(entities.size()) - 1; i >= 0; i--) {
+            // 移动所有物体
             auto ent = entities[i];
 
             if (ent->type == ENEMY_BULLET) {

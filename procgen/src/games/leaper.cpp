@@ -32,6 +32,9 @@ class LeaperGame : public BasicAbstractGame {
     std::vector<float> water_lane_speeds;
     int goal_y = 0;
 
+    int num_road_lanes;
+    int num_water_lanes;
+
     LeaperGame()
         : BasicAbstractGame(NAME) {
         maxspeed = MAX_SPEED;
@@ -78,7 +81,7 @@ class LeaperGame : public BasicAbstractGame {
         if (obj->type == CAR) {
             step_data.done = true;
         } else if (obj->type == FINISH_LINE && agent->vx == 0 && agent->vy == 0) {
-            step_data.reward += GOAL_REWARD;
+            step_data.reward += leaper_context_option->goal_reward;
             step_data.done = true;
             step_data.level_complete = true;
         }
@@ -111,15 +114,21 @@ class LeaperGame : public BasicAbstractGame {
             world_dim = 15;
         }
 
+        world_dim = leaper_context_option->world_dim;
+
         main_width = world_dim;
         main_height = world_dim;
     }
 
     int choose_extra_space() {
-        return options.distribution_mode == EasyMode ? 0 : rand_gen.randn(2);
+        return rand_gen.randn(leaper_context_option->max_extra_space + 1);
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        leaper_context_option->copy_options((LeaperContextOption *) assigned_context_option);
+        timeout = leaper_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
         options.center_agent = false;
@@ -143,6 +152,11 @@ class LeaperGame : public BasicAbstractGame {
             max_log_speed = 0.2f;
         }
 
+        min_car_speed = leaper_context_option->min_car_speed;
+        max_car_speed = leaper_context_option->max_car_speed;
+        min_log_speed = leaper_context_option->min_log_speed;
+        max_log_speed = leaper_context_option->max_log_speed;
+
         // road
         bottom_road_y = choose_extra_space() + 1;
 
@@ -152,10 +166,16 @@ class LeaperGame : public BasicAbstractGame {
         // half the time we add an extra lane to either roads or water
         int extra_lane_option = options.distribution_mode == EasyMode ? 0 : rand_gen.randn(4);
 
-        int num_road_lanes = difficulty + (extra_lane_option == 2 ? 1 : 0);
+        // int extra_road = leaper_context_option->max_road - leaper_context_option->min_road;
+        // num_road_lanes = leaper_context_option->min_road + rand_gen.randn(extra_road + 1);
+        num_road_lanes = difficulty + (extra_lane_option == 2 ? 1 : 0);
+        num_road_lanes = leaper_context_option->min_road < num_road_lanes ? num_road_lanes : leaper_context_option->min_road;
+        num_road_lanes = leaper_context_option->max_road > num_road_lanes ? num_road_lanes : leaper_context_option->max_road;
         road_lane_speeds.clear();
         for (int lane = 0; lane < num_road_lanes; lane++) {
             road_lane_speeds.push_back(rand_sign() * rand_gen.randrange(min_car_speed, max_car_speed));
+            // road_lane_speeds.push_back((rand_gen.rand01() < leaper_context_option->car_left_prob ? 1 : -1) * rand_gen.randrange(min_car_speed, max_car_speed));
+
             fill_elem(0, bottom_road_y + lane, main_width, 1, ROAD);
         }
 
@@ -163,7 +183,11 @@ class LeaperGame : public BasicAbstractGame {
         bottom_water_y = bottom_road_y + num_road_lanes + choose_extra_space() + 1;
 
         water_lane_speeds.clear();
-        int num_water_lanes = difficulty + (extra_lane_option == 3 ? 1 : 0);
+        // int extra_water = leaper_context_option->max_log - leaper_context_option->min_log;
+        // num_water_lanes = leaper_context_option->min_log + rand_gen.randn(extra_water + 1);
+        num_water_lanes = difficulty + (extra_lane_option == 3 ? 1 : 0);
+        num_water_lanes = leaper_context_option->min_log < num_water_lanes ? num_water_lanes : leaper_context_option->min_log;
+        num_water_lanes = leaper_context_option->max_log > num_water_lanes ? num_water_lanes : leaper_context_option->max_log;
         int curr_sign = rand_sign();
         for (int lane = 0; lane < num_water_lanes; lane++) {
             water_lane_speeds.push_back(curr_sign * rand_gen.randrange(min_log_speed, max_log_speed));
@@ -180,6 +204,9 @@ class LeaperGame : public BasicAbstractGame {
         }
 
         add_entity_rxy(main_width / 2.0, goal_y - .5, 0, 0, main_width / 2.0, .5, FINISH_LINE);
+
+        ((int32_t *)e_context.items[0].data)[0] = (int32_t)num_road_lanes;
+        ((int32_t *)e_context.items[1].data)[0] = (int32_t)num_water_lanes;
     }
 
     void spawn_entities() {
@@ -248,6 +275,7 @@ class LeaperGame : public BasicAbstractGame {
     }
 
     void game_step() override {
+
         if (agent->image_theme >= 1) {
             agent->image_theme = (agent->image_theme + 1) % FROG_ANIMATION_FRAMES;
         }

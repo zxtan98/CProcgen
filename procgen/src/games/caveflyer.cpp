@@ -57,7 +57,7 @@ class CaveFlyerGame : public BasicAbstractGame {
         BasicAbstractGame::handle_agent_collision(obj);
 
         if (obj->type == GOAL) {
-            step_data.reward += GOAL_REWARD;
+            step_data.reward += caveflyer_context_option->goal_reward;
             step_data.level_complete = true;
             step_data.done = true;
         } else if (obj->type == OBSTACLE) {
@@ -102,7 +102,7 @@ class CaveFlyerGame : public BasicAbstractGame {
                 if (src->health <= 0 && !src->will_erase) {
                     spawn_child(src, EXPLOSION, .5 * src->rx);
                     src->will_erase = true;
-                    step_data.reward += TARGET_REWARD;
+                    step_data.reward += caveflyer_context_option->target_reward;
                 }
             } else if (src->type == OBSTACLE) {
                 erase_bullet = true;
@@ -138,11 +138,15 @@ class CaveFlyerGame : public BasicAbstractGame {
             world_dim = 60;
         }
 
+        world_dim = caveflyer_context_option->world_dim;
+
         main_width = world_dim;
         main_height = world_dim;
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        caveflyer_context_option->copy_options((CaveflyerContextOption *)assigned_context_option);
         BasicAbstractGame::game_reset();
 
         out_of_bounds_object = WALL_OBJ;
@@ -226,23 +230,25 @@ class CaveFlyerGame : public BasicAbstractGame {
         }
 
         int chunk_size = ((int)(free_cells.size()) / 80);
-        int num_objs = 3 * chunk_size;
+        int num_objs = chunk_size * caveflyer_context_option->objects_factor;
 
         std::vector<int> obstacle_idxs = rand_gen.simple_choose((int)(free_cells.size()), num_objs);
 
         for (int i = 0; i < num_objs; i++) {
             int val = free_cells[obstacle_idxs[i]];
 
-            if (i < chunk_size) {
+            if (i < num_objs / 3 && caveflyer_context_option->enable_obstacle) {
                 auto e = spawn_entity_at_idx(val, .5, OBSTACLE);
                 e->collides_with_entities = true;
-            } else if (i < 2 * chunk_size) {
+            } else if (i < 2 * num_objs / 3 && caveflyer_context_option->enable_target) {
                 auto e = spawn_entity_at_idx(val, .5, TARGET);
                 e->health = 5;
                 e->collides_with_entities = true;
-            } else {
+            } else if (caveflyer_context_option->enable_enemy) {
                 auto e = spawn_entity_at_idx(val, .5, ENEMY);
-                float vel = (.1 * rand_gen.rand01() + .1) * (rand_gen.randn(2) * 2 - 1);
+                // the v is in [0.1, 0.2] with the same probability ]]
+                float vel = rand_gen.rand01() ? caveflyer_context_option->enemy_v_fast : caveflyer_context_option->enemy_v_slow;
+                vel = rand_gen.rand01() ? vel : -vel;
                 if (rand_gen.rand01() < .5) {
                     e->vx = vel;
                 } else {

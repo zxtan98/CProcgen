@@ -75,7 +75,7 @@ class MinerGame : public BasicAbstractGame {
             step_data.done = true;
         } else if (obj->type == EXIT) {
             if (diamonds_remaining == 0) {
-                step_data.reward += COMPLETION_BONUS;
+                step_data.reward += miner_context_option-> completion_bonus;
                 step_data.level_complete = true;
                 step_data.done = true;
             }
@@ -127,9 +127,15 @@ class MinerGame : public BasicAbstractGame {
             main_width = 35;
             main_height = 35;
         }
+        main_width = miner_context_option-> world_dim;
+        main_height = miner_context_option-> world_dim;
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        miner_context_option->copy_options((MinerContextOption *) assigned_context_option);
+        timeout = miner_context_option-> max_episode_steps;
         BasicAbstractGame::game_reset();
 
         agent->rx = .5;
@@ -142,6 +148,9 @@ class MinerGame : public BasicAbstractGame {
 
         float diamond_pct = 12 / 400.0f;
         float boulder_pct = 80 / 400.0f;
+
+        diamond_pct = miner_context_option-> diamond_pct;
+        boulder_pct = miner_context_option-> boulder_pct;
 
         int num_diamonds = (int)(diamond_pct * grid_size);
         int num_boulders = (int)(boulder_pct * grid_size);
@@ -257,7 +266,7 @@ class MinerGame : public BasicAbstractGame {
         int agent_obj = get_obj(int(agent->x), int(agent->y));
 
         if (agent_obj == DIAMOND) {
-            step_data.reward += DIAMOND_REWARD;
+            step_data.reward += miner_context_option-> diamond_reward;
         }
 
         if (agent_obj == DIRT || agent_obj == DIAMOND) {

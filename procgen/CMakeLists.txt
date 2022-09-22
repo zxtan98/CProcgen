@@ -45,6 +45,22 @@ add_library(env
   src/basic-abstract-game.cpp
   src/cpp-utils.cpp
   src/entity.cpp
+  src/context/bigfish-context-option.cpp
+  src/context/bossfight-context-option.cpp
+  src/context/caveflyer-context-option.cpp
+  src/context/chaser-context-option.cpp
+  src/context/climber-context-option.cpp
+  src/context/coinrun-context-option.cpp
+  src/context/dodgeball-context-option.cpp
+  src/context/fruitbot-context-option.cpp
+  src/context/heist-context-option.cpp
+  src/context/jumper-context-option.cpp
+  src/context/leaper-context-option.cpp
+  src/context/maze-context-option.cpp
+  src/context/miner-context-option.cpp
+  src/context/ninja-context-option.cpp
+  src/context/plunder-context-option.cpp
+  src/context/starpilot-context-option.cpp
   src/game.cpp
   src/game-registry.cpp
   src/games/dodgeball.cpp

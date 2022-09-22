@@ -144,7 +144,7 @@ class CoinRun : public BasicAbstractGame {
     void handle_grid_collision(const std::shared_ptr<Entity> &obj, int type, int i, int j) override {
         if (obj->type == PLAYER) {
             if (type == GOAL) {
-                step_data.reward += GOAL_REWARD;
+                step_data.reward += coinrun_context_option->goal_reward;
                 step_data.done = true;
                 step_data.level_complete = true;
             } else if (is_lava(type)) {
@@ -266,7 +266,17 @@ class CoinRun : public BasicAbstractGame {
         int max_difficulty = 3;
         int dif = rand_gen.randn(max_difficulty) + 1;
 
+        dif = std::min(dif, coinrun_context_option->max_difficulty);
+        dif = std::max(dif, coinrun_context_option->min_difficulty);
+
         int num_sections = rand_gen.randn(dif) + dif;
+
+        num_sections = std::min(num_sections, coinrun_context_option->max_section_num);
+        num_sections = std::max(num_sections, coinrun_context_option->min_section_num);
+
+        ((int32_t *)e_context.items[0].data)[0] = dif;
+        ((int32_t *)e_context.items[1].data)[0] = num_sections;
+
         int curr_x = 5;
         int curr_y = 1;
 
@@ -275,7 +285,7 @@ class CoinRun : public BasicAbstractGame {
 
         bool allow_pit = (options.debug_mode & (1 << 1)) == 0;
         bool allow_crate = (options.debug_mode & (1 << 2)) == 0;
-        bool allow_dy = (options.debug_mode & (1 << 3)) == 0;
+        bool allow_dy = (options.debug_mode & (1 << 3)) == 0; // dy = 0 means no jumping
 
         int w = main_width;
 
@@ -290,6 +300,8 @@ class CoinRun : public BasicAbstractGame {
         if (options.distribution_mode == EasyMode) {
             allow_monsters = false;
         }
+
+        allow_monsters = coinrun_context_option->allow_monsters;
 
         for (int section_idx = 0; section_idx < num_sections; section_idx++) {
             if (curr_x + 15 >= w) {
@@ -337,15 +349,20 @@ class CoinRun : public BasicAbstractGame {
 
                 int lava_height = rand_gen.randn(curr_y - 3) + 1;
 
-                if (danger_type == 0) {
+                if (danger_type == 0 && coinrun_context_option->allow_lava) {
                     fill_lava_block(curr_x + x1, 1, pit_width, lava_height);
-                } else if (danger_type == 1) {
+                } else if (danger_type == 1 && coinrun_context_option->allow_saw) {
                     for (int ei = 0; ei < pit_width; ei++) {
                         create_saw_enemy(curr_x + x1 + ei, 1);
                     }
-                } else if (danger_type == 2) {
+                } else if (danger_type == 2 && allow_monsters) {
                     for (int ei = 0; ei < pit_width; ei++) {
                         create_enemy(curr_x + x1 + ei, 1);
+                    }
+                } else {
+                    // If all danger types are disabled, then we just use lava
+                    for (int ei = 0; ei < pit_width; ei++) {
+                        fill_lava_block(curr_x + x1, 1, pit_width, lava_height);
                     }
                 }
 
@@ -372,7 +389,8 @@ class CoinRun : public BasicAbstractGame {
                 int ob1_x = -1;
                 int ob2_x = -1;
 
-                if (rand_gen.randn(10) < (2 * dif) && dx > 3) {
+                if (rand_gen.randn(10) < (2 * dif) && dx > 3 && coinrun_context_option->allow_saw) {
+                    // 
                     ob1_x = curr_x + rand_gen.randn(dx - 2) + 1;
                     create_saw_enemy(ob1_x, curr_y);
                 }
@@ -388,7 +406,9 @@ class CoinRun : public BasicAbstractGame {
                         int crate_x = curr_x + rand_gen.randn(dx - 2) + 1;
 
                         if (rand_gen.randn(2) == 1 && ob1_x != crate_x && ob2_x != crate_x) {
-                            int pile_height = rand_gen.randn(3) + 1;
+                            int pile_height = rand_gen.randn(
+                                coinrun_context_option->max_crate_height - coinrun_context_option->min_crate_height + 1
+                            ) + coinrun_context_option->min_crate_height;
 
                             for (int j = 0; j < pile_height; j++) {
                                 create_crate(crate_x, curr_y + j);
@@ -414,6 +434,10 @@ class CoinRun : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        coinrun_context_option->copy_options((CoinrunContextOption *) assigned_context_option);
+        timeout = coinrun_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
         gravity = 0.2f;
@@ -422,6 +446,11 @@ class CoinRun : public BasicAbstractGame {
         maxspeed = .5;
         has_support = false;
         facing_right = true;
+
+        visibility = coinrun_context_option->visibility;
+        maxspeed = coinrun_context_option->maxspeed;
+        main_width = coinrun_context_option->main_width;
+        main_height = coinrun_context_option->main_height;
 
         if (options.distribution_mode == EasyMode) {
             agent->image_theme = 0;

@@ -1,6 +1,22 @@
 
 #include "game.h"
 #include "vecoptions.h"
+#include "context/bigfish-context-option.h"
+#include "context/bossfight-context-option.h"
+#include "context/caveflyer-context-option.h"
+#include "context/chaser-context-option.h"
+#include "context/climber-context-option.h"
+#include "context/coinrun-context-option.h"
+#include "context/dodgeball-context-option.h"
+#include "context/fruitbot-context-option.h"
+#include "context/heist-context-option.h"
+#include "context/jumper-context-option.h"
+#include "context/leaper-context-option.h"
+#include "context/maze-context-option.h"
+#include "context/miner-context-option.h"
+#include "context/ninja-context-option.h"
+#include "context/plunder-context-option.h"
+#include "context/starpilot-context-option.h"
 
 // this should be updated whenever the state format or environments may have changed
 const int SERIALIZE_VERSION = 0;
@@ -34,9 +50,108 @@ Game::Game(std::string name) : game_name(name) {
     step_data.reward = 0;
     step_data.done = true;
     step_data.level_complete = false;
+
+    if(name=="bigfish"){
+        assigned_context_option = new BigfishContextOption();
+        bigfish_context_option = new BigfishContextOption();
+    } else if (name=="bossfight"){
+        assigned_context_option = new BossfightContextOption();
+        bossfight_context_option = new BossfightContextOption();
+    } else if (name=="caveflyer"){
+        assigned_context_option = new CaveflyerContextOption();
+        caveflyer_context_option = new CaveflyerContextOption();
+    } else if (name=="chaser"){
+        assigned_context_option = new ChaserContextOption();
+        chaser_context_option = new ChaserContextOption();
+    } else if (name=="climber"){
+        assigned_context_option = new ClimberContextOption();
+        climber_context_option = new ClimberContextOption();
+    } else if (name=="coinrun"){
+        assigned_context_option = new CoinrunContextOption();
+        coinrun_context_option = new CoinrunContextOption();
+    } else if (name=="dodgeball"){
+        assigned_context_option = new DodgeballContextOption();
+        dodgeball_context_option = new DodgeballContextOption();
+    } else if (name=="fruitbot"){
+        assigned_context_option = new FruitbotContextOption();
+        fruitbot_context_option = new FruitbotContextOption();
+    } else if (name=="heist"){
+        assigned_context_option = new HeistContextOption();
+        heist_context_option = new HeistContextOption();
+    } else if (name=="jumper"){
+        assigned_context_option = new JumperContextOption();
+        jumper_context_option = new JumperContextOption();
+    } else if (name=="leaper"){
+        assigned_context_option = new LeaperContextOption();
+        leaper_context_option = new LeaperContextOption();
+    } else if (name=="maze"){
+        assigned_context_option = new MazeContextOption();
+        maze_context_option = new MazeContextOption();
+    } else if (name=="miner"){
+        assigned_context_option = new MinerContextOption();
+        miner_context_option = new MinerContextOption();
+    } else if (name=="ninja"){
+        assigned_context_option = new NinjaContextOption();
+        ninja_context_option = new NinjaContextOption();
+    } else if (name=="plunder"){
+        assigned_context_option = new PlunderContextOption();
+        plunder_context_option = new PlunderContextOption();
+    } else if (name=="starpilot"){
+        assigned_context_option = new StarpilotContextOption();
+        starpilot_context_option = new StarpilotContextOption();
+    }
 }
 
 Game::~Game() {
+    if(bigfish_context_option){
+        delete (BigfishContextOption*)assigned_context_option;
+        delete bigfish_context_option;
+    } else if (bossfight_context_option){
+        delete (BossfightContextOption*)assigned_context_option;
+        delete bossfight_context_option;
+    } else if (caveflyer_context_option){
+        delete (CaveflyerContextOption*)assigned_context_option;
+        delete caveflyer_context_option;
+    } else if (chaser_context_option){
+        delete (ChaserContextOption*)assigned_context_option;
+        delete chaser_context_option;
+    } else if (climber_context_option){
+        delete (ClimberContextOption*)assigned_context_option;
+        delete climber_context_option;
+    } else if (coinrun_context_option){
+        delete (CoinrunContextOption*)assigned_context_option;
+        delete coinrun_context_option;
+    } else if (dodgeball_context_option){
+        delete (DodgeballContextOption*)assigned_context_option;
+        delete dodgeball_context_option;
+    } else if (fruitbot_context_option){
+        delete (FruitbotContextOption*)assigned_context_option;
+        delete fruitbot_context_option;
+    } else if (heist_context_option){
+        delete (HeistContextOption*)assigned_context_option;
+        delete heist_context_option;
+    } else if (jumper_context_option){
+        delete (JumperContextOption*)assigned_context_option;
+        delete jumper_context_option;
+    } else if (leaper_context_option){
+        delete (LeaperContextOption*)assigned_context_option;
+        delete leaper_context_option;
+    } else if (maze_context_option){
+        delete (MazeContextOption*)assigned_context_option;
+        delete maze_context_option;
+    } else if (miner_context_option){
+        delete (MinerContextOption*)assigned_context_option;
+        delete miner_context_option;
+    } else if (ninja_context_option){
+        delete (NinjaContextOption*)assigned_context_option;
+        delete ninja_context_option;
+    } else if (plunder_context_option){
+        delete (PlunderContextOption*)assigned_context_option;
+        delete plunder_context_option;
+    } else if (starpilot_context_option){
+        delete (StarpilotContextOption*)assigned_context_option;
+        delete starpilot_context_option;
+    }
 }
 
 void Game::parse_options(std::string name, VecOptions opts) {
@@ -72,6 +187,61 @@ void Game::parse_options(std::string name, VecOptions opts) {
     opts.consume_int("game_type", &game_type);
 
     opts.ensure_empty();
+}
+
+void Game::parse_context_options(std::string name, VecOptions opts, bool init_e_context) {
+    if (name == "bigfish") {
+        ((BigfishContextOption*)assigned_context_option)->parse_options(&opts);
+        // e_context.count = 0;
+        if (init_e_context) bigfish_context_option->init_episode_context(&e_context);
+    } else if (name == "bossfight") {
+        ((BossfightContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) bossfight_context_option->init_episode_context(&e_context);
+    } else if (name == "caveflyer") {
+        ((CaveflyerContextOption*)assigned_context_option)->parse_options(&opts);
+        e_context.count = 0;
+    } else if (name == "chaser") {
+        ((ChaserContextOption*)assigned_context_option)->parse_options(&opts);
+        e_context.count = 0;
+    } else if (name == "climber") {
+        ((ClimberContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) climber_context_option->init_episode_context(&e_context);
+    } else if (name == "coinrun") {
+        ((CoinrunContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) coinrun_context_option->init_episode_context(&e_context);
+    } else if (name == "dodgeball") {
+        ((DodgeballContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) dodgeball_context_option->init_episode_context(&e_context);
+    } else if (name == "fruitbot") {
+        ((FruitbotContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) fruitbot_context_option->init_episode_context(&e_context);
+    } else if (name == "heist") {
+        ((HeistContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) heist_context_option->init_episode_context(&e_context);
+    } else if (name == "jumper") {
+        ((JumperContextOption*)assigned_context_option)->parse_options(&opts);
+        e_context.count = 0;
+    } else if (name == "leaper") {
+        ((LeaperContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) leaper_context_option->init_episode_context(&e_context);
+    } else if (name == "maze") {
+        ((MazeContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) maze_context_option->init_episode_context(&e_context);
+    } else if (name == "miner") {
+        ((MinerContextOption*)assigned_context_option)->parse_options(&opts);
+        e_context.count = 0;
+    } else if (name == "ninja") {
+        ((NinjaContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) ninja_context_option->init_episode_context(&e_context);
+    } else if (name == "plunder") {
+        ((PlunderContextOption*)assigned_context_option)->parse_options(&opts);
+        e_context.count = 0;
+    } else if (name == "starpilot") {
+        ((StarpilotContextOption*)assigned_context_option)->parse_options(&opts);
+        if (init_e_context) starpilot_context_option->init_episode_context(&e_context);
+    } else {
+        fatal("unknown game name %s", name.c_str());
+    }
 }
 
 void Game::render_to_buf(void *dst, int w, int h, bool antialias) {

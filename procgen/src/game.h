@@ -17,6 +17,22 @@ Base class used for all games, all games must inherit from this
 #include "object-ids.h"
 #include "game-registry.h"
 #include "buffer.h"
+#include "context/bigfish-context-option.h"
+#include "context/bossfight-context-option.h"
+#include "context/caveflyer-context-option.h"
+#include "context/chaser-context-option.h"
+#include "context/climber-context-option.h"
+#include "context/coinrun-context-option.h"
+#include "context/dodgeball-context-option.h"
+#include "context/fruitbot-context-option.h"
+#include "context/heist-context-option.h"
+#include "context/jumper-context-option.h"
+#include "context/leaper-context-option.h"
+#include "context/maze-context-option.h"
+#include "context/miner-context-option.h"
+#include "context/ninja-context-option.h"
+#include "context/plunder-context-option.h"
+#include "context/starpilot-context-option.h"
 
 // We want all games to have same observation space. So all these
 // constants here related to observation space are constants forever.
@@ -104,12 +120,14 @@ class Game {
     std::vector<void *> info_bufs;
     float *reward_ptr = nullptr;
     uint8_t *first_ptr = nullptr;
+    libenv_options e_context;
 
     Game(std::string name);
     void step();
     void reset();
     void render_to_buf(void *buf, int w, int h, bool antialias);
     void parse_options(std::string name, VecOptions opt_vec);
+    void parse_context_options(std::string name, VecOptions opt_vec, bool init_e_context=true);
 
     virtual ~Game() = 0;
     virtual void observe();
@@ -119,6 +137,24 @@ class Game {
     virtual void game_draw(QPainter &p, const QRect &rect) = 0;
     virtual void serialize(WriteBuffer *b);
     virtual void deserialize(ReadBuffer *b);
+
+    void *assigned_context_option = nullptr;
+    BigfishContextOption *bigfish_context_option = nullptr;
+    BossfightContextOption *bossfight_context_option = nullptr;
+    CaveflyerContextOption *caveflyer_context_option = nullptr;
+    ChaserContextOption *chaser_context_option = nullptr;
+    ClimberContextOption *climber_context_option = nullptr;
+    CoinrunContextOption *coinrun_context_option = nullptr;
+    DodgeballContextOption *dodgeball_context_option = nullptr;
+    FruitbotContextOption *fruitbot_context_option = nullptr;
+    HeistContextOption *heist_context_option = nullptr;
+    JumperContextOption *jumper_context_option = nullptr;
+    LeaperContextOption *leaper_context_option = nullptr;
+    MazeContextOption *maze_context_option = nullptr;
+    MinerContextOption *miner_context_option = nullptr;
+    NinjaContextOption *ninja_context_option = nullptr;
+    PlunderContextOption *plunder_context_option = nullptr;
+    StarpilotContextOption *starpilot_context_option = nullptr;
 
   private:
     int reset_count = 0;

@@ -20,7 +20,7 @@ class MazeGame : public BasicAbstractGame {
         has_useful_vel_info = false;
 
         out_of_bounds_object = WALL_OBJ;
-        visibility = 8.0;
+        visibility = maze_context_option->visibility;
     }
 
     void load_background_images() override {
@@ -48,17 +48,28 @@ class MazeGame : public BasicAbstractGame {
             world_dim = 31;
         }
 
+        world_dim = maze_context_option->world_dim;
+
         main_width = world_dim;
         main_height = world_dim;
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        maze_context_option->copy_options((MazeContextOption *) assigned_context_option);
+        timeout = maze_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
+
 
         grid_step = true;
 
-        maze_dim = rand_gen.randn((world_dim - 1) / 2) * 2 + 3;
+        int extra_maze_dim = maze_context_option->world_dim - maze_context_option->min_maze_dim;
+        maze_dim = rand_gen.randn(extra_maze_dim + 1) + maze_context_option->min_maze_dim;
+        maze_dim = maze_dim > maze_context_option->max_maze_dim ? maze_context_option->max_maze_dim : maze_dim;
         int margin = (world_dim - maze_dim) / 2;
+
+        ((int32_t *)e_context.items[0].data)[0] = maze_dim;
 
         std::shared_ptr<MazeGen> _maze_gen(new MazeGen(&rand_gen, maze_dim));
         maze_gen = _maze_gen;
@@ -115,7 +126,7 @@ class MazeGame : public BasicAbstractGame {
 
         if (get_obj(ix, iy) == GOAL) {
             set_obj(ix, iy, SPACE);
-            step_data.reward += REWARD;
+            step_data.reward += maze_context_option->goal_reward;
             step_data.level_complete = true;
         }
 

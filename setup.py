@@ -72,7 +72,7 @@ class custom_build_ext(build_ext):
         # the on-demand build
         for filename in ["libenv.so", "libenv.dylib", "env.dll"]:
             src = os.path.join(lib_dir, filename)
-            dst = os.path.join(self.build_lib, "procgen", "data", "prebuilt", filename)
+            dst = os.path.join(self.build_lib, "cprocgen", "data", "prebuilt", filename)
             if os.path.exists(src):
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
                 os.replace(src, dst)
@@ -83,7 +83,7 @@ asset_paths = glob.glob(os.path.join(PACKAGE_ROOT, "data", "**"), recursive=True
 asset_relpaths = [os.path.relpath(path, PACKAGE_ROOT) for path in asset_paths]
 
 setup(
-    name="procgen",
+    name="cprocgen",
     packages=find_packages(),
     version=version,
     install_requires=[
@@ -94,7 +94,7 @@ setup(
     ],
     python_requires=">=3.6.0",
     package_data={
-        "procgen": [
+        "cprocgen": [
             "version.txt",
             *asset_relpaths,
         ]
@@ -106,6 +106,5 @@ setup(
     author="OpenAI",
     description="Procedurally Generated Game-Like RL Environments",
     long_description=README,
-    long_description_content_type="text/markdown",
-    url="https://github.com/openai/procgen",
+    long_description_content_type="text/markdown"
 )

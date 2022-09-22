@@ -1,5 +1,6 @@
 #include "../basic-abstract-game.h"
 #include "../assetgen.h"
+#include "../context/bigfish-context-option.h"
 #include <set>
 #include <queue>
 
@@ -17,8 +18,8 @@ const int FISH_QUOTA = 30;
 
 class BigFish : public BasicAbstractGame {
   public:
-    int fish_eaten = 0;
-    float r_inc = 0.0;
+    int fish_eaten;
+    float r_inc;
 
     BigFish()
         : BasicAbstractGame(NAME) {
@@ -49,7 +50,7 @@ class BigFish : public BasicAbstractGame {
             if (obj->rx > agent->rx) {
                 step_data.done = true;
             } else {
-                step_data.reward += POSITIVE_REWARD;
+                step_data.reward += bigfish_context_option->positive_reward;
                 obj->will_erase = true;
                 agent->rx += r_inc;
                 agent->ry += r_inc;
@@ -59,32 +60,32 @@ class BigFish : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        bigfish_context_option->copy_options((BigfishContextOption*)assigned_context_option);
         BasicAbstractGame::game_reset();
 
+        timeout = bigfish_context_option->max_episode_steps;
+        
         options.center_agent = false;
         fish_eaten = 0;
 
-        float start_r = .5;
+        float start_r = bigfish_context_option->start_r;
 
-        if (options.distribution_mode == EasyMode) {
-            start_r = 1;
-        }
-
-        r_inc = (FISH_MAX_R - start_r) / FISH_QUOTA;
+        r_inc = (FISH_MAX_R - start_r) / bigfish_context_option->fish_quota;
 
         agent->rx = start_r;
         agent->ry = start_r;
         agent->y = 1 + agent->ry;
+        ((float *)e_context.items[0].data)[0] = start_r;
     }
 
     void game_step() override {
         BasicAbstractGame::game_step();
 
-        if (rand_gen.randn(10) == 1) {
-            float ent_r = (FISH_MAX_R - FISH_MIN_R) * pow(rand_gen.rand01(), 1.4) + FISH_MIN_R;
+        if (rand_gen.rand01() < bigfish_context_option->fish_prob) {
+            float ent_r = (bigfish_context_option->fish_max_r - bigfish_context_option->fish_min_r) * pow(rand_gen.rand01(), 1.4) + bigfish_context_option->fish_min_r;
             float ent_y = rand_gen.rand01() * (main_height - 2 * ent_r);
-            float moves_right = rand_gen.rand01() < .5;
-            float ent_vx = (.15 + rand_gen.rand01() * .25) * (moves_right ? 1 : -1);
+            float moves_right = rand_gen.rand01() < bigfish_context_option->from_left_prob;
+            float ent_vx = (bigfish_context_option->min_speed + rand_gen.rand01() * (bigfish_context_option->max_speed - bigfish_context_option->min_speed)) * (moves_right ? 1 : -1);
             float ent_x = moves_right ? -1 * ent_r : main_width + ent_r;
             int type = FISH;
             auto ent = add_entity(ent_x, ent_y, ent_vx, 0, ent_r, type);
@@ -93,9 +94,9 @@ class BigFish : public BasicAbstractGame {
             ent->is_reflected = !moves_right;
         }
 
-        if (fish_eaten >= FISH_QUOTA) {
+        if (fish_eaten >= bigfish_context_option->fish_quota) {
             step_data.done = true;
-            step_data.reward += COMPLETION_BONUS;
+            step_data.reward += bigfish_context_option->completion_bonus;
             step_data.level_complete = true;
         }
 
@@ -104,18 +105,6 @@ class BigFish : public BasicAbstractGame {
         if (action_vx < 0)
             agent->is_reflected = true;
     }
-
-    void serialize(WriteBuffer *b) override {
-        BasicAbstractGame::serialize(b);
-        b->write_int(fish_eaten);
-        b->write_float(r_inc);
-    }
-
-    void deserialize(ReadBuffer *b) override {
-        BasicAbstractGame::deserialize(b);
-        fish_eaten = b->read_int();
-        r_inc = b->read_float();
-    }
 };
 
-REGISTER_GAME(NAME, BigFish);
+REGISTER_GAME("bigfish", BigFish);

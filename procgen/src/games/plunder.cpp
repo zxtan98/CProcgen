@@ -92,10 +92,10 @@ class PlunderGame : public BasicAbstractGame {
 
                 if (is_target(target->image_theme)) {
                     targets_hit += 1;
-                    step_data.reward += POSITIVE_REWARD;
-                    juice_left += 0.1f;
+                    step_data.reward += plunder_context_option->positive_reward;
+                    juice_left += plunder_context_option->target_time_reward;
                 } else {
-                    juice_left -= 0.1f;
+                    juice_left -= plunder_context_option->target_time_penalty;
                 }
             } else if (target->type == PANEL) {
                 src->will_erase = true;
@@ -114,18 +114,24 @@ class PlunderGame : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        plunder_context_option->copy_options((PlunderContextOption *) assigned_context_option);
+        timeout = plunder_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
         agent->image_type = SHIP;
 
         juice_left = 1;
         targets_hit = 0;
-        target_quota = 20;
-        spawn_prob = 0.06f;
+        target_quota = plunder_context_option->target_quota;
+        spawn_prob = plunder_context_option->spawn_prob;
         r_scale = options.distribution_mode == EasyMode ? 1.5f : 1.0f;
+        r_scale = plunder_context_option->r_scale;
         int num_total_ship_types = 6;
 
         num_lanes = 5;
+        num_lanes = plunder_context_option->num_lanes;
         lane_directions.clear();
         lane_vels.clear();
         target_bools.clear();
@@ -149,8 +155,9 @@ class PlunderGame : public BasicAbstractGame {
         }
 
         for (int i = 0; i < num_lanes; i++) {
-            lane_directions.push_back(rand_gen.rand01() < .5);
-            lane_vels.push_back(.15 + .1 * rand_gen.rand01());
+            lane_directions.push_back(rand_gen.rand01() < plunder_context_option->left_prob);
+            int extra_vel = plunder_context_option->max_speed - plunder_context_option->min_speed;
+            lane_vels.push_back(plunder_context_option->min_speed + extra_vel * rand_gen.rand01());
         }
 
         int num_panels = options.distribution_mode == EasyMode ? 0 : rand_gen.randn(4);
@@ -194,7 +201,7 @@ class PlunderGame : public BasicAbstractGame {
     void game_step() override {
         BasicAbstractGame::game_step();
 
-        juice_left -= 0.0015f;
+        juice_left -= plunder_context_option->step_time_penalty;
 
         if (rand_gen.rand01() < spawn_prob) {
             float ent_r = r_scale;
@@ -204,7 +211,7 @@ class PlunderGame : public BasicAbstractGame {
             float ent_vx = lane_vels[lane] * (moves_right ? 1 : -1);
             auto ent = std::make_shared<Entity>(0, ent_y, ent_vx, 0, ent_r, SHIP);
             ent->image_type = SHIP;
-            ent->image_theme = image_permutation[rand_gen.randn(num_current_ship_types)];
+            ent->image_theme = image_permutation[rand_gen.rand01()<plunder_context_option->enemy_prob?0:1];
             match_aspect_ratio(ent);
             ent->x = moves_right ? -1 * ent_r : (main_width + ent_r);
             ent->is_reflected = !moves_right;
@@ -219,7 +226,7 @@ class PlunderGame : public BasicAbstractGame {
             new_bullet->collides_with_entities = true;
             new_bullet->expire_time = 50;
             last_fire_time = cur_time;
-            juice_left -= 0.02f;
+            juice_left -= plunder_context_option->fire_time_penalty;
         }
 
         if (juice_left <= 0) {
@@ -230,7 +237,7 @@ class PlunderGame : public BasicAbstractGame {
 
         if (targets_hit >= target_quota) {
             step_data.done = true;
-            step_data.reward += COMPLETION_BONUS;
+            step_data.reward += plunder_context_option->completion_bonus;
             step_data.level_complete = true;
         }
 

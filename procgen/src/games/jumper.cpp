@@ -213,12 +213,17 @@ class Jumper : public BasicAbstractGame {
         } else if (dist_diff == MemoryMode) {
             world_dim = 45;
         }
+        world_dim = jumper_context_option->world_dim;
 
         main_width = world_dim;
         main_height = world_dim;
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        jumper_context_option->copy_options((JumperContextOption *) assigned_context_option);
+        timeout = jumper_context_option->max_episode_steps;
         if (options.distribution_mode == EasyMode) {
             visibility = 12;
             compass_dim = 3;
@@ -226,6 +231,9 @@ class Jumper : public BasicAbstractGame {
             visibility = 16;
             compass_dim = 2;
         }
+
+        visibility = jumper_context_option->visibility;
+        compass_dim = jumper_context_option->compass_dim;
 
         if (options.distribution_mode == MemoryMode) {
             timeout = 2000;
@@ -405,10 +413,10 @@ class Jumper : public BasicAbstractGame {
         has_support = can_support(obj_below_1) || can_support(obj_below_2);
 
         if (has_support) {
-            jump_count = 2;
+            jump_count = jumper_context_option->max_jump_count;
         }
 
-        if (action_vy == 1 && jump_count > 0 && (cur_time - jump_time > JUMP_COOLDOWN)) {
+        if (action_vy == 1 && jump_count > 0 && (cur_time - jump_time > jumper_context_option->jump_cooldown)) {
             jump_count -= 1;
             jump_delta = -1;
         } else {

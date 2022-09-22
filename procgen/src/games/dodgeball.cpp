@@ -109,7 +109,7 @@ class DodgeballGame : public BasicAbstractGame {
         } else if (obj->type == DOOR) {
             if (num_enemies == 0) {
                 step_data.done = true;
-                step_data.reward += COMPLETION_BONUS;
+                step_data.reward += dodgeball_context_option->completion_bonus;
                 step_data.level_complete = true;
             }
         } else if (obj->type == LAVA_WALL) {
@@ -127,7 +127,7 @@ class DodgeballGame : public BasicAbstractGame {
 
                 if (src->health <= 0 && !src->will_erase) {
                     src->will_erase = true;
-                    step_data.reward += ENEMY_REWARD;
+                    step_data.reward += dodgeball_context_option->enemy_reward;
 
                     auto ent = spawn_child(src, DUST_CLOUD, src->rx);
                     ent->vrot = PI / 0.3f;
@@ -224,7 +224,7 @@ class DodgeballGame : public BasicAbstractGame {
     }
 
     void choose_vel(const std::shared_ptr<Entity> &ent) {
-        float vel = ENEMY_VEL * (rand_gen.randn(2) * 2 - 1);
+        float vel = dodgeball_context_option->enemy_speed * (rand_gen.randn(2) * 2 - 1);
 
         if (rand_gen.randn(2) == 0) {
             ent->vx = vel;
@@ -247,6 +247,7 @@ class DodgeballGame : public BasicAbstractGame {
 
     void choose_world_dim() override {
         int world_dim = 20;
+        world_dim = dodgeball_context_option->world_dim;
 
         if (options.distribution_mode == MemoryMode) {
             world_dim = 40;
@@ -257,6 +258,10 @@ class DodgeballGame : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        dodgeball_context_option->copy_options((DodgeballContextOption *) assigned_context_option);
+        timeout = dodgeball_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
         options.center_agent = options.distribution_mode == MemoryMode;
@@ -312,6 +317,15 @@ class DodgeballGame : public BasicAbstractGame {
             fassert(false);
         }
 
+        thickness = dodgeball_context_option->thickness;
+        enemy_r = dodgeball_context_option->enemy_r;
+        ball_r = dodgeball_context_option->ball_r;
+        ball_vscale = dodgeball_context_option->ball_vscale;
+        maxspeed = dodgeball_context_option->maxspeed;
+        exit_r = dodgeball_context_option->exit_r;
+        num_iterations = dodgeball_context_option->num_iterations;
+        max_extra_enemies = dodgeball_context_option->max_extra_enemies;
+
         hard_min_dim = 4 * agent->rx + 2 * thickness + .5;
         min_dim = agent->rx * 8 + .5;
 
@@ -330,21 +344,44 @@ class DodgeballGame : public BasicAbstractGame {
 
         float doorlen = 2 * exit_r;
 
-        int exit_wall_choice = rand_gen.randn(4);
+        int choice_map[4] = {-1, -1, -1, -1};
+        int cur_choice = 0;
+        if (dodgeball_context_option->allow_bottom_exit){
+            choice_map[0] = cur_choice++;
+        }
+        if (dodgeball_context_option->allow_top_exit){
+            choice_map[1] = cur_choice++;
+        }
+        if (dodgeball_context_option->allow_left_exit){
+            choice_map[2] = cur_choice++;
+        }
+        if (dodgeball_context_option->allow_right_exit){
+            choice_map[3] = cur_choice++;
+        }
 
-        if (exit_wall_choice == 0) {
+        int exit_wall_choice = rand_gen.randn(cur_choice);
+        int exit_wall_id;
+
+        if (exit_wall_choice == choice_map[0]) {
             spawn_entity_rxy(doorlen / 2, exit_r, DOOR, 2 * border_r, 2 * border_r, main_width - 4 * border_r, 2 * exit_r);
-        } else if (exit_wall_choice == 1) {
+            exit_wall_id = 0;
+        } else if (exit_wall_choice == choice_map[1]) {
             spawn_entity_rxy(doorlen / 2, exit_r, DOOR, 2 * border_r, main_height - 2 * border_r - 2 * exit_r, main_width - 4 * border_r, 2 * exit_r);
-        } else if (exit_wall_choice == 2) {
+            exit_wall_id = 1;
+        } else if (exit_wall_choice == choice_map[2]) {
             spawn_entity_rxy(exit_r, doorlen / 2, DOOR, 2 * border_r, 2 * border_r, 2 * exit_r, main_height - 4 * border_r);
-        } else if (exit_wall_choice == 3) {
+            exit_wall_id = 2;
+        } else if (exit_wall_choice == choice_map[3]) {
             spawn_entity_rxy(exit_r, doorlen / 2, DOOR, main_width - 2 * border_r - 2 * exit_r, 2 * border_r, 2 * exit_r, main_height - 4 * border_r);
+            exit_wall_id = 3;
         }
 
         reposition_agent();
 
-        num_enemies = rand_gen.randn(max_extra_enemies + 1) + 3;
+        num_enemies = rand_gen.randn(max_extra_enemies + 1) + dodgeball_context_option->base_num_enemies;
+
+        ((int32_t *) e_context.items[0].data)[0] = exit_wall_id;
+        ((int32_t *) e_context.items[1].data)[0] = num_enemies;
 
         spawn_entities(num_enemies, enemy_r, ENEMY, 0, 0, main_width, main_height);
 
@@ -383,7 +420,7 @@ class DodgeballGame : public BasicAbstractGame {
 
         agent->face_direction(vx, vy);
 
-        if (special_action == 1 && (cur_time - last_fire_time) >= 7) {
+        if (special_action == 1 && (cur_time - last_fire_time) >= dodgeball_context_option->fire_interval) {
             auto new_ball = add_entity(agent->x, agent->y, vx * ball_vscale, vy * ball_vscale, ball_r, PLAYER_BALL);
             new_ball->collides_with_entities = true;
             new_ball->expire_time = 50;
@@ -417,10 +454,10 @@ class DodgeballGame : public BasicAbstractGame {
                     if (fabs(dx) < 1) {
                         fire_ball(ent, 0, bvely);
                         ent->vx = 0;
-                        ent->vy = bvely * ENEMY_VEL;
+                        ent->vy = bvely * dodgeball_context_option->enemy_speed;
                     } else if (fabs(dy) < 1) {
                         fire_ball(ent, bvelx, 0);
-                        ent->vx = bvelx * ENEMY_VEL;
+                        ent->vx = bvelx * dodgeball_context_option->enemy_speed;
                         ent->vy = 0;
                     }
 

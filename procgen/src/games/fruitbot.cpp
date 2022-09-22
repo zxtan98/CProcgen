@@ -99,17 +99,17 @@ class FruitBotGame : public BasicAbstractGame {
         if (obj->type == BARRIER) {
             step_data.done = true;
         } else if (obj->type == BAD_OBJ) {
-            step_data.reward += PENALTY;
+            step_data.reward += fruitbot_context_option->penalty;
             obj->will_erase = true;
         } else if (obj->type == LOCKED_DOOR) {
             step_data.done = true;
         } else if (obj->type == GOOD_OBJ) {
-            step_data.reward += POSITIVE_REWARD;
+            step_data.reward += fruitbot_context_option->positive_reward;
             obj->will_erase = true;
         } else if (obj->type == PRESENT) {
             if (!step_data.done) {
             }
-            step_data.reward += COMPLETION_BONUS;
+            step_data.reward += fruitbot_context_option->completion_bonus;
             step_data.done = true;
             step_data.level_complete = true;
         }
@@ -195,6 +195,10 @@ class FruitBotGame : public BasicAbstractGame {
     }
 
     void game_reset() override {
+        // copy assigned_context_option to context_option
+        // e.g. chaser_context_option->copy_options((ChaserContextOption *) assigned_context_option);
+        fruitbot_context_option->copy_options((FruitbotContextOption *) assigned_context_option);
+        timeout = fruitbot_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
         last_fire_time = 0;
@@ -213,7 +217,17 @@ class FruitBotGame : public BasicAbstractGame {
             min_pct = .2;
         }
 
-        std::vector<int> partition = rand_gen.partition(main_height - min_sep * num_walls - buf_h, num_walls);
+        min_sep = fruitbot_context_option->min_sep;
+        num_walls = fruitbot_context_option->num_walls;
+        object_group_size = fruitbot_context_option->object_group_size;
+        buf_h = fruitbot_context_option->buf_h;
+        door_prob = fruitbot_context_option->door_prob;
+        min_pct = fruitbot_context_option->min_pct;
+
+        int partition_value = main_height - min_sep * num_walls - buf_h;
+        main_height = partition_value >= 0 ? main_height : min_sep * num_walls + buf_h;
+
+        std::vector<int> partition = rand_gen.partition(partition_value > 0 ? partition_value : 0, num_walls);
 
         int curr_h = 0;
 
@@ -228,8 +242,14 @@ class FruitBotGame : public BasicAbstractGame {
 
         agent->y = agent->ry;
 
-        int num_good = rand_gen.randn(10) + 10;
-        int num_bad = rand_gen.randn(10) + 10;
+        int extra_fruits = fruitbot_context_option->max_fruits - fruitbot_context_option->min_fruits + 1;
+        int extra_foods = fruitbot_context_option->max_foods - fruitbot_context_option->min_foods + 1;
+
+        int num_good = rand_gen.randn(extra_fruits) + fruitbot_context_option->min_fruits;
+        int num_bad = rand_gen.randn(extra_foods) + fruitbot_context_option->min_foods;
+
+        ((int32_t *) e_context.items[0].data)[0] = num_good;
+        ((int32_t *) e_context.items[1].data)[0] = num_bad;        
 
         for (int i = 0; i < main_width; i++) {
             auto present = add_entity_rxy(i + .5, main_height - .5, 0, 0, .5, .5, PRESENT);

@@ -3,9 +3,11 @@ import random
 from typing import Sequence, Optional, List
 
 import gym3
-from gym3.libenv import CEnv
+from .libenv import CEnv
 import numpy as np
 from .builder import build
+
+from .default_context import default_context_options
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -73,6 +75,7 @@ class BaseProcgenEnv(CEnv):
         num,
         env_name,
         options,
+        context_options=None,
         debug=False,
         rand_seed=None,
         num_levels=0,
@@ -125,10 +128,18 @@ class BaseProcgenEnv(CEnv):
 
         self.options = options
 
+        # combine the default context options with the user-specified ones
+        new_context_options = []
+        if context_options is None:
+            context_options = [{} for _ in range(num)]
+        for context_option in context_options:
+            new_context_options.append({**default_context_options[env_name], **context_option})
+        self.context_options = new_context_options
         super().__init__(
             lib_dir=lib_dir,
             num=num,
             options=options,
+            context_options=new_context_options,
             c_func_defs=[
                 "int get_state(libenv_env *, int, char *, int);",
                 "void set_state(libenv_env *, int, char *, int);",
@@ -233,8 +244,9 @@ class ProcgenGym3Env(BaseProcgenEnv):
             kwargs["start_level"] = EXPLORATION_LEVEL_SEEDS[env_name]
         else:
             distribution_mode = DISTRIBUTION_MODE_DICT[distribution_mode]
-
-        options = {
+        if "options" not in kwargs:
+            kwargs["options"] = {}
+        kwargs["options"].update({
                 "center_agent": bool(center_agent),
                 "use_generated_assets": bool(use_generated_assets),
                 "use_monochrome_assets": bool(use_monochrome_assets),
@@ -242,8 +254,9 @@ class ProcgenGym3Env(BaseProcgenEnv):
                 "use_backgrounds": bool(use_backgrounds),
                 "paint_vel_info": bool(paint_vel_info),
                 "distribution_mode": distribution_mode,
-            }
-        super().__init__(num, env_name, options, **kwargs)
+        })
+
+        super().__init__(num, env_name, **kwargs)
         
         
 class ToBaselinesVecEnv(gym3.ToBaselinesVecEnv):
@@ -262,4 +275,8 @@ class ToBaselinesVecEnv(gym3.ToBaselinesVecEnv):
 
 
 def ProcgenEnv(num_envs, env_name, **kwargs):
-    return ToBaselinesVecEnv(ProcgenGym3Env(num=num_envs, env_name=env_name, **kwargs))
+    env1 = ProcgenGym3Env(num_envs, env_name, **kwargs)
+    env2 = ToBaselinesVecEnv(env1)
+    env2.set_context_to = env1.set_context_to
+    env2.get_context = env1.get_context
+    return env2

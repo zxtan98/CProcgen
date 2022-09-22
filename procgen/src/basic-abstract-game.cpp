@@ -554,8 +554,8 @@ void BasicAbstractGame::reposition(const std::shared_ptr<Entity> &ent, float x, 
     }
 
     if (count == 100) {
-        printf("WARNING: excessive randomization attempts. Game num, type, rx, ry, w, h: %d %d %f_%f %d %d \n", game_n, ent->type, rx, ry, main_width, main_height);
-        printf("Agent: %f %f\n", agent->x, agent->y);
+        // printf("WARNING: excessive randomization attempts. Game num, type, rx, ry, w, h: %d %d %f_%f %d %d \n", game_n, ent->type, rx, ry, main_width, main_height);
+        // printf("Agent: %f %f\n", agent->x, agent->y);
     }
 }
 
