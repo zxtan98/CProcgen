@@ -211,7 +211,7 @@ class BaseProcgenEnv(CEnv):
         return super().act({"action": ac.astype(np.int32)})
 
 
-class ProcgenGym3Env(BaseProcgenEnv):
+class CProcgenGym3Env(BaseProcgenEnv):
     """
     gym3 interface for Procgen
     """
@@ -274,8 +274,8 @@ class ToBaselinesVecEnv(gym3.ToBaselinesVecEnv):
                 return ob['rgb'][0]        
 
 
-def ProcgenEnv(num_envs, env_name, **kwargs):
-    env1 = ProcgenGym3Env(num_envs, env_name, **kwargs)
+def CProcgenEnv(num_envs, env_name, **kwargs):
+    env1 = CProcgenGym3Env(num_envs, env_name, **kwargs)
     env2 = ToBaselinesVecEnv(env1)
     env2.set_context_to = env1.set_context_to
     env2.get_context = env1.get_context

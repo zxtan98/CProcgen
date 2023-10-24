@@ -6,8 +6,18 @@ import glob
 import subprocess
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-PACKAGE_ROOT = os.path.join(SCRIPT_DIR, "procgen")
-README = open(os.path.join(SCRIPT_DIR, "README.md"), "rb").read().decode("utf8")
+PACKAGE_ROOT = os.path.join(SCRIPT_DIR, "cprocgen")
+
+
+# create a soft link of dir
+dst = PACKAGE_ROOT
+scr = os.path.abspath(os.path.join(SCRIPT_DIR, '../procgen'))
+if os.path.exists(dst):
+    os.remove(dst)
+os.symlink(scr, dst, target_is_directory=True)
+
+
+README = open(os.path.join(SCRIPT_DIR, "../README.md"), "rb").read().decode("utf8")
 
 # dynamically determine version number based on git commit
 def determine_version():
@@ -106,5 +116,6 @@ setup(
     author="OpenAI",
     description="Procedurally Generated Game-Like RL Environments",
     long_description=README,
-    long_description_content_type="text/markdown"
+    long_description_content_type="text/markdown",
+    py_modules=["cprocgen"]
 )

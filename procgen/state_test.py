@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from procgen import ProcgenGym3Env
+from procgen import CProcgenGym3Env
 from .env import ENV_NAMES
 import gym3
 import multiprocessing as mp
@@ -12,7 +12,7 @@ NUM_STEPS = 10000
 def gather_rollouts(
     env_kwargs, actions, state=None, get_state=False, set_state_every_step=False
 ):
-    env = ProcgenGym3Env(**env_kwargs)
+    env = CProcgenGym3Env(**env_kwargs)
     if state is not None:
         env.callmethod("set_state", state)
     result = [dict(ob=env.observe(), info=env.get_info())]
@@ -70,7 +70,7 @@ def test_state(env_name):
 
 def run_state_test(env_name):
     env_kwargs = dict(num=2, env_name=env_name, rand_seed=0)
-    env = ProcgenGym3Env(**env_kwargs)
+    env = CProcgenGym3Env(**env_kwargs)
     rng = np.random.RandomState(0)
     actions = [
         gym3.types_np.sample(env.ac_space, bshape=(env.num,), rng=rng)

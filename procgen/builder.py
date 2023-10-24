@@ -115,7 +115,7 @@ def build(package=False, debug=False):
 
                 lock_ctx = filelock.FileLock(".build-lock")
             with lock_ctx:
-                sys.stdout.write("building procgen...")
+                sys.stdout.write("Building C-Procgen...")
                 sys.stdout.flush()
                 try:
                     os.makedirs(build_type, exist_ok=True)

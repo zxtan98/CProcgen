@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 
-from procgen import ProcgenGym3Env
+from procgen import CProcgenGym3Env
 from .env import ENV_NAMES
 from gym3 import Interactive, VideoRecorderWrapper, unwrap
 
@@ -31,7 +31,7 @@ def make_interactive(vision, record_dir, **kwargs):
     else:
         ob_key = "rgb"
 
-    env = ProcgenGym3Env(num=1, **kwargs)
+    env = CProcgenGym3Env(num=1, **kwargs)
     if record_dir is not None:
         env = VideoRecorderWrapper(
             env=env, directory=record_dir, ob_key=ob_key, info_key=info_key
