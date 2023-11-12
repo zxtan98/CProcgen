@@ -27,7 +27,7 @@ A simple platformer where the player must climb a sequence of platforms and coll
     "margin_bottom": 5,
     "completion_bonus": 10.,
     "coin_reward": 1.,
-    # Total: 14
+    # Total: 15
 }
 ```
 

@@ -28,7 +28,7 @@ The player, a mouse, must navigate a maze to find the sole piece of cheese and e
 | Parameter | Description | Default Value | Data Type |
 |-----------|-------------|---------------|-----------|
 |`max_episode_steps`| Maximum number of steps per episode. | 1000 | `int` |
-|`world_dim`| Dimension of the maze. (The maze size will be randomly chosen from `min_maze_dim` to `max_maze_dim`.) | 15 | `int` |
+|`world_dim`| Dimension of the game map. (The maze size will be randomly chosen from `min_maze_dim` to `max_maze_dim`.) | 15 | `int` |
 |`min_maze_dim`| Minimum dimension of the maze. | 3 | `int` |
 |`max_maze_dim`| Maximum dimension of the maze. | 15 | `int` |
 |`visibility`| Range of visibility around the player. | 8. | `float` |

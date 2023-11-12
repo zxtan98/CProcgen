@@ -47,7 +47,7 @@ Loosely inspired by the Atari game "Berzerk," Dodgeball is a game where the play
 |`maxspeed`| Maximum speed of the player. | 0.75 | `float` |
 |`exit_r`| Radius of the unlocked platform for level completion. | 1.5 | `float` |
 |`enemy_speed`| Speed of the enemies. | 0.05 | `float` |
-|`num_iterations`| Number of iterations for enemy placement. | 2 | `int` |
+|`num_iterations`| The number of times rooms are subdivided, affecting the complexity and layout of the game map. | 2 | `int` |
 |`max_extra_enemies`| Maximum number of extra enemies that can be added. | 3 | `int` |
 |`base_num_enemies`| Base number of enemies in the game. | 3 | `int` |
 |`allow_left_exit`| Flag indicating whether left-side exit is allowed. | True | `bool` |

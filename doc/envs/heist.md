@@ -12,19 +12,16 @@ The player must steal the gem hidden behind a network of locks. Each lock comes 
 
 ### Context Example
 ```
-"bigfish": {
+"heist": {
     "max_episode_steps": 1000,
-    "start_r": 1.,
-    "fish_prob": .1,
-    "from_left_prob": .5,
+    "world_dim": 9,
+    "max_maze_dim": 9,
+    "min_maze_dim": 5,
+    "min_keys": 0,
+    "max_keys": 3,
+    "maxspeed": 0.75,
     "completion_bonus": 10.,
-    "positive_reward": 1.,
-    "fish_min_r": .25,
-    "fish_max_r": 2.,
-    "fish_quota": 30,
-    "min_speed": .15,
-    "max_speed": .4,
-    # Total: 11
+    # Total: 8
 }
 ```
 

@@ -51,7 +51,7 @@ Coinrun is a simple platformer game where the player's goal is to collect the co
 |`allow_monsters`| Determines if monsters are allowed in the game. | false | `bool` |
 |`min_crate_height`| Minimum height of crates. | 1 | `int` |
 |`max_crate_height`| Maximum height of crates. | 3 | `int` |
-|`max_difficulty`| Maximum difficulty level of the game. (This difficulty is a complex context that affects the `num_sections`, number of pits, height differences in the ground, and the probability of saws and monsters appearing.) | 3 | `int` |
+|`max_difficulty`| Maximum difficulty level of the game. (This difficulty is a complex parameter that affects the `num_sections`, number of pits, height differences in the ground, and the probability of saws and monsters appearing.) | 3 | `int` |
 |`min_difficulty`| Minimum difficulty level of the game. | 1 | `int` |
 |`max_section_num`| Maximum number of sections in the game. | 5 | `int` |
 |`min_section_num`| Minimum number of sections in the game. | 1 | `int` |

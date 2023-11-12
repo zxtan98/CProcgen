@@ -30,7 +30,7 @@ Inspired by the Atari game "MsPacman," the Chaser game in C-Procgen features maz
 | `max_episode_steps` | Maximum number of steps per episode. | 1000 | `int` |
 | `maze_dim` | Dimension of the maze. | 11 | `int` |
 | `total_enemies` | Total number of enemies in the maze. | 3 | `int` |
-| `extra_orb_sign` | A context that can have a complex explanation. When its value is 0, it represents the normal condition. When its value is n, it signifies that there are n additional enemies in a specific quadrant. | 0 | `int` |
+| `extra_orb_sign` | The number of additional enemies present in a specific quadrant of the game environment. A value of 0 signifies the standard scenario with no extra enemies. When set to a positive integer 'n', it represents the presence of 'n' additional enemies in a designated quadrant. | 0 | `int` |
 | `eat_time` | Time interval during which enemies can be eaten. | 75 | `int` |
 | `egg_time` | Time duration for an egg to hatch into a new enemy after being eaten. | 50 | `int` |
 | `total_orbs` | The game ends when the agent eats this number of enemies. | 10 | `int` |

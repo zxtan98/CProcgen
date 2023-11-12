@@ -46,11 +46,11 @@ The player controls a small starship and must destroy a much bigger boss starshi
 |`positive_reward`| Reward received for damaging the boss. | 1 | `int` |
 |`boss_r`| Radius of the boss starship. | 3. | `float` |
 |`player_bullet_vel`| Velocity of the player's projectiles. | 1 | `int` |
-|`bottom_margin`| Bottom margin for the boss starship. | 6 | `int` |
+|`bottom_margin`| Bottom margin for the barriers. | 6 | `int` |
 |`boss_bullet_vel`| Velocity of the boss's projectiles. | 0.5 | `float` |
-|`max_extra_invulnerable`| Maximum extra duration of boss invulnerability after taking damage. | 1 | `int` |
+|`max_extra_invulnerable`| Maximum extra duration of boss invulnerability after each round. | 1 | `int` |
 |`boss_vel_timeout`| Time interval for the boss to change direction. | 20 | `int` |
-|`boss_damage_timeout`| Duration of boss invulnerability after each round. | 40 | `int` |
+|`boss_damage_timeout`| The time duration a boss remains vulnerable after being hit. | 40 | `int` |
 |`max_rounds_num`| Maximum number of rounds for the boss. | 5 | `int` |
 |`min_rounds_num`| Minimum number of rounds for the boss. | 1 | `int` |
 |`max_round_health`| Maximum health for each round of the boss. | 9 | `int` |
@@ -59,7 +59,7 @@ The player controls a small starship and must destroy a much bigger boss starshi
 |`enable_attack_mode_1`| Enables attack mode 1 for the boss. | True | `bool` |
 |`enable_attack_mode_2`| Enables attack mode 2 for the boss. | True | `bool` |
 |`enable_attack_mode_3`| Enables attack mode 3 for the boss. | True | `bool` |
-|`enable_shield`| Enables shield for the agent. | True | `bool` |
+|`enable_shield`| 	Enables the invincibility shield for the boss. When enabled, the boss will have periods of invulnerability, during which it cannot be damaged by the player's attacks. | True | `bool` |
 |`max_barriers_num`| Maximum number of barriers. | 3 | `int` |
 |`min_barriers_num`| Minimum number of barriers. | 1 | `int` |
 |`completion_bonus`| Reward received when the boss is destroyed. | 10 | `int` |
