@@ -21,8 +21,8 @@ Please ensure that the dependencies listed in the [`environment.yml`](environmen
     ```
 2. Once the dependencies are installed, install C-Procgen in editable mode:
     ```bash
-    pip install -e .
-    # this should say "building procgen...done"
+    pip install -e ./cprocgen
+    # this should say "Building C-Procgen...done"
     ```
 
 ## Quick Start
@@ -31,7 +31,7 @@ Here are some examples on how to use C-Procgen. We recommend using `ProcgenEnv` 
 
 ```python
 # Import the C-Procgen package
-from procgen import ProcgenEnv
+from cprocgen import CProcgenEnv
 ```
 
 * **Set specific contexts for each parallel environment.** The available context parameters for each environment are summarized [below](#environments-list).
@@ -47,7 +47,7 @@ from procgen import ProcgenEnv
     }
 
     # Create a Procgen environment with specific contexts
-    env = ProcgenEnv(num_envs=2, env_name='ninja', context_options=[context_1, context_2])
+    env = CProcgenEnv(num_envs=2, env_name='ninja', context_options=[context_1, context_2])
     ```
 
 * **Tracking context information.** Some context information is varied within a specified range and is randomly generated for each episode. For example, `num_sections` in `ninja` is controlled by `min_num_sections` and `max_num_sections`. We provide `get_context()` method to track current context information for each episode.
@@ -88,7 +88,7 @@ In C-Procgen, some of the original Procgen parameters related to the `level seed
 ## Context Parameters
 In C-Procgen, the default context options correspond to the same game logic and difficulty as the `easy` setting in the original Procgen. The following code demonstrates how to view and use the default context:
 ```python
-from procgen.default_context import default_context_options
+from cprocgen.default_context import default_context_options
 
 default_context = default_context_options['ninja']
 
