@@ -1,4 +1,4 @@
-# C-Procgen: enhancing Procgen with **C**ontrollable **C**ontexts
+# C-Procgen: empowering  Procgen with **C**ontrollable **C**ontexts
 
 <p align="center">
     <img src="./doc/asset/NinjaGame.png" width="600px">
