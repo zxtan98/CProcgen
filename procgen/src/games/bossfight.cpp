@@ -212,7 +212,7 @@ class BossfightGame : public BasicAbstractGame {
         int max_extra_invulnerable = options.distribution_mode == EasyMode ? 1 : 3;
 
         boss_bullet_vel = bossfight_context_option->boss_bullet_vel;
-        max_extra_invulnerable = bossfight_context_option->max_extra_invulnerable;
+        // max_extra_invulnerable = bossfight_context_option->max_extra_invulnerable;
 
         options.center_agent = false;
 
@@ -228,11 +228,16 @@ class BossfightGame : public BasicAbstractGame {
         boss_vel_timeout = bossfight_context_option->boss_vel_timeout;
         base_fire_prob = 0.1f;
         // 生成这个level的rounds数量和每个round中boss的血量
-        int health_range = bossfight_context_option->max_round_health - bossfight_context_option->min_round_health + 1;
-        round_health = rand_gen.randn(health_range) + bossfight_context_option->min_round_health;
-        int rounds_range = bossfight_context_option->max_rounds_num - bossfight_context_option->min_rounds_num + 1;
-        num_rounds = rand_gen.randn(rounds_range) + bossfight_context_option->min_rounds_num;
-        invulnerable_duration = 2 + rand_gen.randn(max_extra_invulnerable + 1);
+        // int health_range = bossfight_context_option->max_round_health - bossfight_context_option->min_round_health + 1;
+        // round_health = rand_gen.randn(health_range) + bossfight_context_option->min_round_health;
+        // int rounds_range = bossfight_context_option->max_rounds_num - bossfight_context_option->min_rounds_num + 1;
+        // num_rounds = rand_gen.randn(rounds_range) + bossfight_context_option->min_rounds_num;
+
+        round_health = bossfight_context_option->round_health;
+        num_rounds = bossfight_context_option->rounds_num;
+
+        // invulnerable_duration = 2 + rand_gen.randn(max_extra_invulnerable + 1);
+        invulnerable_duration = bossfight_context_option->invulnerable_time;
         vulnerable_duration = 500; // essentially infinite
 
         boss->health = round_health * num_rounds;
@@ -282,8 +287,8 @@ class BossfightGame : public BasicAbstractGame {
         //     spawn_barriers();
         //     step_entities(entities);
         // }
-        ((int32_t *)e_context.items[0].data)[0] = round_health;
-        ((int32_t *)e_context.items[1].data)[0] = num_rounds;
+        // ((int32_t *)e_context.items[0].data)[0] = round_health;
+        // ((int32_t *)e_context.items[1].data)[0] = num_rounds;
     }
 
     void boss_fire(float bullet_r, float vel, float theta) {
@@ -362,9 +367,10 @@ class BossfightGame : public BasicAbstractGame {
 
     void spawn_barriers() {
         // 生成陨石障碍物
-        int barriers_range = bossfight_context_option->max_barriers_num - bossfight_context_option->min_barriers_num + 1;
-        int num_barriers = rand_gen.randn(barriers_range) + bossfight_context_option->min_barriers_num ;
-        ((int32_t *)e_context.items[2].data)[0] = num_barriers;
+        // int barriers_range = bossfight_context_option->max_barriers_num - bossfight_context_option->min_barriers_num + 1;
+        // int num_barriers = rand_gen.randn(barriers_range) + bossfight_context_option->min_barriers_num ;
+        int num_barriers = bossfight_context_option->barrier_num;
+        // ((int32_t *)e_context.items[2].data)[0] = num_barriers;
         for (int i = 0; i < num_barriers; i++) {
             float barrier_r = 0.6f;
             float min_barrier_y = 2 * agent->ry + barrier_r + .5;

@@ -193,10 +193,10 @@ void Game::parse_context_options(std::string name, VecOptions opts, bool init_e_
     if (name == "bigfish") {
         ((BigfishContextOption*)assigned_context_option)->parse_options(&opts);
         // e_context.count = 0;
-        if (init_e_context) bigfish_context_option->init_episode_context(&e_context);
+        // if (init_e_context) bigfish_context_option->init_episode_context(&e_context);
     } else if (name == "bossfight") {
         ((BossfightContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) bossfight_context_option->init_episode_context(&e_context);
+        // if (init_e_context) bossfight_context_option->init_episode_context(&e_context);
     } else if (name == "caveflyer") {
         ((CaveflyerContextOption*)assigned_context_option)->parse_options(&opts);
         e_context.count = 0;
@@ -205,40 +205,40 @@ void Game::parse_context_options(std::string name, VecOptions opts, bool init_e_
         e_context.count = 0;
     } else if (name == "climber") {
         ((ClimberContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) climber_context_option->init_episode_context(&e_context);
+        // if (init_e_context) climber_context_option->init_episode_context(&e_context);
     } else if (name == "coinrun") {
         ((CoinrunContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) coinrun_context_option->init_episode_context(&e_context);
+        // if (init_e_context) coinrun_context_option->init_episode_context(&e_context);
     } else if (name == "dodgeball") {
         ((DodgeballContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) dodgeball_context_option->init_episode_context(&e_context);
+        // if (init_e_context) dodgeball_context_option->init_episode_context(&e_context);
     } else if (name == "fruitbot") {
         ((FruitbotContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) fruitbot_context_option->init_episode_context(&e_context);
+        // if (init_e_context) fruitbot_context_option->init_episode_context(&e_context);
     } else if (name == "heist") {
         ((HeistContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) heist_context_option->init_episode_context(&e_context);
+        // if (init_e_context) heist_context_option->init_episode_context(&e_context);
     } else if (name == "jumper") {
         ((JumperContextOption*)assigned_context_option)->parse_options(&opts);
         e_context.count = 0;
     } else if (name == "leaper") {
         ((LeaperContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) leaper_context_option->init_episode_context(&e_context);
+        // if (init_e_context) leaper_context_option->init_episode_context(&e_context);
     } else if (name == "maze") {
         ((MazeContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) maze_context_option->init_episode_context(&e_context);
+        // if (init_e_context) maze_context_option->init_episode_context(&e_context);
     } else if (name == "miner") {
         ((MinerContextOption*)assigned_context_option)->parse_options(&opts);
         e_context.count = 0;
     } else if (name == "ninja") {
         ((NinjaContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) ninja_context_option->init_episode_context(&e_context);
+        // if (init_e_context) ninja_context_option->init_episode_context(&e_context);
     } else if (name == "plunder") {
         ((PlunderContextOption*)assigned_context_option)->parse_options(&opts);
         e_context.count = 0;
     } else if (name == "starpilot") {
         ((StarpilotContextOption*)assigned_context_option)->parse_options(&opts);
-        if (init_e_context) starpilot_context_option->init_episode_context(&e_context);
+        // if (init_e_context) starpilot_context_option->init_episode_context(&e_context);
     } else {
         fatal("unknown game name %s", name.c_str());
     }
