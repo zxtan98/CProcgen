@@ -7,8 +7,9 @@ private:
     /* data */
 public:
     int world_dim;
-    int min_maze_dim;
-    int max_maze_dim;
+    // int min_maze_dim;
+    // int max_maze_dim;
+    int maze_dim;
 
     float visibility;
     float goal_reward;

@@ -197,8 +197,9 @@ default_context_options = {
     "maze": {
         "max_episode_steps": 1000,
         "world_dim": 15,
-        "min_maze_dim": 3,
-        "max_maze_dim": 15,
+        # "min_maze_dim": 3,
+        # "max_maze_dim": 15,
+        "maze_dim": 9,
         "visibility": 8.,
         "goal_reward": 10., 
         # Total: 6

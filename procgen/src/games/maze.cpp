@@ -64,12 +64,13 @@ class MazeGame : public BasicAbstractGame {
 
         grid_step = true;
 
-        int extra_maze_dim = maze_context_option->world_dim - maze_context_option->min_maze_dim;
-        maze_dim = rand_gen.randn(extra_maze_dim + 1) + maze_context_option->min_maze_dim;
-        maze_dim = maze_dim > maze_context_option->max_maze_dim ? maze_context_option->max_maze_dim : maze_dim;
+        // int extra_maze_dim = maze_context_option->world_dim - maze_context_option->min_maze_dim;
+        // maze_dim = rand_gen.randn(extra_maze_dim + 1) + maze_context_option->min_maze_dim;
+        // maze_dim = maze_dim > maze_context_option->max_maze_dim ? maze_context_option->max_maze_dim : maze_dim;
+        maze_dim = maze_context_option->maze_dim;
         int margin = (world_dim - maze_dim) / 2;
 
-        ((int32_t *)e_context.items[0].data)[0] = maze_dim;
+        // ((int32_t *)e_context.items[0].data)[0] = maze_dim;
 
         std::shared_ptr<MazeGen> _maze_gen(new MazeGen(&rand_gen, maze_dim));
         maze_gen = _maze_gen;
