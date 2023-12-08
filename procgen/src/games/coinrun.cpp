@@ -266,16 +266,18 @@ class CoinRun : public BasicAbstractGame {
         int max_difficulty = 3;
         int dif = rand_gen.randn(max_difficulty) + 1;
 
-        dif = std::min(dif, coinrun_context_option->max_difficulty);
-        dif = std::max(dif, coinrun_context_option->min_difficulty);
+        // dif = std::min(dif, coinrun_context_option->max_difficulty);
+        // dif = std::max(dif, coinrun_context_option->min_difficulty);
+        dif = coinrun_context_option->difficulty;
 
         int num_sections = rand_gen.randn(dif) + dif;
 
-        num_sections = std::min(num_sections, coinrun_context_option->max_section_num);
-        num_sections = std::max(num_sections, coinrun_context_option->min_section_num);
+        // num_sections = std::min(num_sections, coinrun_context_option->max_section_num);
+        // num_sections = std::max(num_sections, coinrun_context_option->min_section_num);
+        num_sections = coinrun_context_option->section_num;
 
-        ((int32_t *)e_context.items[0].data)[0] = dif;
-        ((int32_t *)e_context.items[1].data)[0] = num_sections;
+        // ((int32_t *)e_context.items[0].data)[0] = dif;
+        // ((int32_t *)e_context.items[1].data)[0] = num_sections;
 
         int curr_x = 5;
         int curr_y = 1;

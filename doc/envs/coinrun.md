@@ -25,10 +25,8 @@ Coinrun is a simple platformer game where the player's goal is to collect the co
     "allow_monsters": false,
     "min_crate_height": 1,
     "max_crate_height": 3,
-    "max_difficulty": 3,
-    "min_difficulty": 1,
-    "max_section_num": 5,
-    "min_section_num": 1,
+    "difficulty": 2,
+    "section_num": 3,
     "goal_reward": 10.0
     # Total: 18
 }
@@ -51,8 +49,6 @@ Coinrun is a simple platformer game where the player's goal is to collect the co
 |`allow_monsters`| Determines if monsters are allowed in the game. | false | `bool` |
 |`min_crate_height`| Minimum height of crates. | 1 | `int` |
 |`max_crate_height`| Maximum height of crates. | 3 | `int` |
-|`max_difficulty`| Maximum difficulty level of the game. (This difficulty is a complex parameter that affects the `num_sections`, number of pits, height differences in the ground, and the probability of saws and monsters appearing.) | 3 | `int` |
-|`min_difficulty`| Minimum difficulty level of the game. | 1 | `int` |
-|`max_section_num`| Maximum number of sections in the game. | 5 | `int` |
-|`min_section_num`| Minimum number of sections in the game. | 1 | `int` |
+|`difficulty`| The difficulty level of the game. (This difficulty is a complex parameter that affects the number of pits, height differences in the ground, and the probability of saws and monsters appearing.) | 2 | `int` |
+|`section_num`| The number of sections in the game. | 3 | `int` |
 |`goal_reward`| Reward received when the player collects the coin. | 10.0 | `float` |

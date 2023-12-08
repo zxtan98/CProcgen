@@ -25,10 +25,12 @@ void CoinrunContextOption::parse_options(VecOptions *opts)
     opts->consume_bool("allow_monsters", &allow_monsters, true, false);
     opts->consume_int("min_crate_height", &min_crate_height, true, 1);
     opts->consume_int("max_crate_height", &max_crate_height, true, 3);
-    opts->consume_int("max_difficulty", &max_difficulty, true, 3);
-    opts->consume_int("min_difficulty", &min_difficulty, true, 1);
-    opts->consume_int("max_section_num", &max_section_num, true, 5);
-    opts->consume_int("min_section_num", &min_section_num, true, 1);
+    // opts->consume_int("max_difficulty", &max_difficulty, true, 3);
+    // opts->consume_int("min_difficulty", &min_difficulty, true, 1);
+    // opts->consume_int("max_section_num", &max_section_num, true, 5);
+    // opts->consume_int("min_section_num", &min_section_num, true, 1);
+    opts->consume_int("difficulty", &difficulty, true, 2);
+    opts->consume_int("section_num", &section_num, true, 3);
     opts->consume_float("goal_reward", &goal_reward, true, 0.5);
     opts->consume_int("max_episode_steps", &max_episode_steps, true, 1000);
 }
@@ -47,28 +49,29 @@ void CoinrunContextOption::copy_options(CoinrunContextOption *opts)
     allow_monsters = opts->allow_monsters;
     min_crate_height = opts->min_crate_height;
     max_crate_height = opts->max_crate_height;
-    max_difficulty = opts->max_difficulty;
-    min_difficulty = opts->min_difficulty;
-    min_section_num = opts->min_section_num;
-    max_section_num = opts->max_section_num;
-    min_section_num = opts->min_section_num;
+    // max_difficulty = opts->max_difficulty;
+    // min_difficulty = opts->min_difficulty;
+    // min_section_num = opts->min_section_num;
+    // max_section_num = opts->max_section_num;
+    difficulty = opts->difficulty;
+    section_num = opts->section_num;
     goal_reward = opts->goal_reward;
     max_episode_steps = opts->max_episode_steps;
 }
 
-void CoinrunContextOption::init_episode_context(struct libenv_options *e_context)
-{
-    int count_num = 2;
-    e_context->count = count_num;
-    e_context->items = new struct libenv_option[count_num];
+// void CoinrunContextOption::init_episode_context(struct libenv_options *e_context)
+// {
+//     int count_num = 2;
+//     e_context->count = count_num;
+//     e_context->items = new struct libenv_option[count_num];
 
-    strcpy(e_context->items[0].name, "difficulty");
-    e_context->items[0].dtype = LIBENV_DTYPE_INT32;
-    e_context->items[0].count = 1;
-    e_context->items[0].data = new int32_t[1];
+//     strcpy(e_context->items[0].name, "difficulty");
+//     e_context->items[0].dtype = LIBENV_DTYPE_INT32;
+//     e_context->items[0].count = 1;
+//     e_context->items[0].data = new int32_t[1];
 
-    strcpy(e_context->items[1].name, "num_sections");
-    e_context->items[1].dtype = LIBENV_DTYPE_INT32;
-    e_context->items[1].count = 1;
-    e_context->items[1].data = new int32_t[1];
-}
+//     strcpy(e_context->items[1].name, "num_sections");
+//     e_context->items[1].dtype = LIBENV_DTYPE_INT32;
+//     e_context->items[1].count = 1;
+//     e_context->items[1].data = new int32_t[1];
+// }

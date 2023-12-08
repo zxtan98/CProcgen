@@ -21,11 +21,13 @@ public:
     int min_crate_height;
     int max_crate_height;
 
-    int max_difficulty; // 3
-    int min_difficulty; // 1
+    // int max_difficulty; // 3
+    // int min_difficulty; // 1
+    int difficulty;
 
-    int max_section_num; // 5
-    int min_section_num; // 1
+    // int max_section_num; // 5
+    // int min_section_num; // 1
+    int section_num;
 
     float goal_reward;
 
