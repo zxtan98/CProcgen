@@ -212,15 +212,16 @@ class Ninja : public BasicAbstractGame {
         // bomb_prob = ninja_context_option->bomb_prob;
 
         int num_sections = rand_gen.randn(difficulty) + difficulty;
-        num_sections = ninja_context_option->max_num_sections < num_sections ? ninja_context_option->max_num_sections : num_sections; 
-        num_sections = ninja_context_option->min_num_sections > num_sections ? ninja_context_option->min_num_sections : num_sections;
+        // num_sections = ninja_context_option->max_num_sections < num_sections ? ninja_context_option->max_num_sections : num_sections; 
+        // num_sections = ninja_context_option->min_num_sections > num_sections ? ninja_context_option->min_num_sections : num_sections;
+        num_sections = ninja_context_option->num_sections;
         int start_x = 5;
         int curr_x = start_x;
         int curr_y = main_height / 2;
         int min_y = curr_y;
 
-        ((int32_t *) e_context.items[0].data)[0] = difficulty;
-        ((int32_t *) e_context.items[1].data)[0] = num_sections;
+        // ((int32_t *) e_context.items[0].data)[0] = difficulty;
+        // ((int32_t *) e_context.items[1].data)[0] = num_sections;
         int w = main_width;
 
         float _max_dy = max_jump * max_jump / (2 * gravity);
@@ -347,9 +348,11 @@ class Ninja : public BasicAbstractGame {
             visibility = 10;
         }
 
-        int max_difficulty = ninja_context_option->max_difficulty;
-        int min_difficulty = ninja_context_option->min_difficulty;
-        int difficulty = rand_gen.randn(max_difficulty - min_difficulty + 1) + min_difficulty;
+        // int max_difficulty = ninja_context_option->max_difficulty;
+        // int min_difficulty = ninja_context_option->min_difficulty;
+        // int difficulty = rand_gen.randn(max_difficulty - min_difficulty + 1) + min_difficulty;
+        int difficulty = ninja_context_option->difficulty;
+        int num_sections = ninja_context_option->num_sections;
 
         last_fire_time = 0;
 

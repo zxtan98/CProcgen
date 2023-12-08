@@ -13,10 +13,12 @@ public:
     float maxspeed;
     int visibility;
     float bomb_prob;
-    int min_num_sections;
-    int max_num_sections;
-    int max_difficulty;
-    int min_difficulty;
+    // int min_num_sections;
+    // int max_num_sections;
+    // int max_difficulty;
+    // int min_difficulty;
+    int num_sections;
+    int difficulty;
     int max_gap_inc;
 
     float goal_reward;
