@@ -156,10 +156,12 @@ default_context_options = {
     "heist": {
         "max_episode_steps": 1000,
         "world_dim": 9,
-        "max_maze_dim": 9,
-        "min_maze_dim": 5,
-        "min_keys": 0,
-        "max_keys": 3,
+        # "max_maze_dim": 9,
+        # "min_maze_dim": 5,
+        "maze_dim": 7,
+        # "min_keys": 0,
+        # "max_keys": 3,
+        "num_keys": 2,
         "maxspeed": 0.75,
         "completion_bonus": 10.,
         # Total: 8

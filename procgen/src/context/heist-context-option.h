@@ -8,10 +8,14 @@ private:
 public:
     // float start_r;
     int world_dim;
-    int max_maze_dim;
-    int min_maze_dim;
-    int min_keys;
-    int max_keys;
+    // int max_maze_dim;
+    // int min_maze_dim;
+    // int min_keys;
+    // int max_keys;
+
+    int maze_dim;
+    int num_keys;
+    
     float maxspeed;
 
     float completion_bonus;

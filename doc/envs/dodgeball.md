@@ -29,7 +29,6 @@ Loosely inspired by the Atari game "Berzerk," Dodgeball is a game where the play
     "allow_top_exit": True,
     "allow_bottom_exit": True,
     "completion_bonus": 10.,
-    # Total: 18
 }
 ```
 

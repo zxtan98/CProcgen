@@ -121,23 +121,26 @@ class HeistGame : public BasicAbstractGame {
         timeout = heist_context_option->max_episode_steps;
         BasicAbstractGame::game_reset();
 
-        int min_maze_dim = heist_context_option->min_maze_dim;
-        int max_diff = (world_dim - min_maze_dim) / 2;
-        int difficulty = rand_gen.randn(max_diff + 1);
+        // int min_maze_dim = heist_context_option->min_maze_dim;
+        // int max_diff = (world_dim - min_maze_dim) / 2;
+        // int difficulty = rand_gen.randn(max_diff + 1);
 
         options.center_agent = options.distribution_mode == MemoryMode;
 
-        if (options.distribution_mode == MemoryMode) {
-            num_keys = rand_gen.randn(4);
-        } else {
-            num_keys = difficulty + rand_gen.randn(2);
-        }
+        // if (options.distribution_mode == MemoryMode) {
+        //     num_keys = rand_gen.randn(4);
+        // } else {
+        //     num_keys = difficulty + rand_gen.randn(2);
+        // }
+
+        num_keys = heist_context_option->num_keys;
 
         if (num_keys > 3)
             num_keys = 3;
 
-        num_keys = heist_context_option->min_keys > num_keys ? heist_context_option->min_keys : num_keys;
-        num_keys = heist_context_option->max_keys < num_keys ? heist_context_option->max_keys : num_keys;
+        // num_keys = heist_context_option->min_keys > num_keys ? heist_context_option->min_keys : num_keys;
+        // num_keys = heist_context_option->max_keys < num_keys ? heist_context_option->max_keys : num_keys;
+        num_keys = heist_context_option->num_keys;
         
         has_keys.clear();
 
@@ -145,8 +148,9 @@ class HeistGame : public BasicAbstractGame {
             has_keys.push_back(false);
         }
 
-        int maze_dim = difficulty * 2 + min_maze_dim;
-        maze_dim = maze_dim > heist_context_option->max_maze_dim ? heist_context_option->max_maze_dim : maze_dim;
+        // int maze_dim = difficulty * 2 + min_maze_dim;
+        int maze_dim = heist_context_option->maze_dim;
+        // maze_dim = maze_dim > heist_context_option->max_maze_dim ? heist_context_option->max_maze_dim : maze_dim;
         float maze_scale = main_height / (world_dim * 1.0);
 
         agent->rx = .375 * maze_scale;
@@ -211,8 +215,8 @@ class HeistGame : public BasicAbstractGame {
             match_aspect_ratio(ent);
         }
 
-        ((int32_t *)e_context.items[0].data)[0] = maze_dim;
-        ((int32_t *)e_context.items[1].data)[0] = num_keys;
+        // ((int32_t *)e_context.items[0].data)[0] = maze_dim;
+        // ((int32_t *)e_context.items[1].data)[0] = num_keys;
     }
 
     void game_step() override {

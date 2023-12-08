@@ -15,13 +15,10 @@ The player must steal the gem hidden behind a network of locks. Each lock comes 
 "heist": {
     "max_episode_steps": 1000,
     "world_dim": 9,
-    "max_maze_dim": 9,
-    "min_maze_dim": 5,
-    "min_keys": 0,
-    "max_keys": 3,
+    "maze_dim": 7,
+    "num_keys": 2,
     "maxspeed": 0.75,
-    "completion_bonus": 10.,
-    # Total: 8
+    "completion_bonus": 10.
 }
 ```
 
@@ -30,9 +27,7 @@ The player must steal the gem hidden behind a network of locks. Each lock comes 
 |-----------|-------------|---------------|-----------|
 |`max_episode_steps`| Maximum number of steps per episode. | 1000 | `int` |
 |`world_dim`| Dimension of the game world. | 9 | `int` |
-|`max_maze_dim`| Maximum dimension of the maze. | 9 | `int` |
-|`min_maze_dim`| Minimum dimension of the maze. | 5 | `int` |
-|`min_keys`| Minimum number of keys required to complete the level. | 0 | `int` |
-|`max_keys`| Maximum number of keys that can be collected in the level. | 3 | `int` |
+|`min_maze_dim`| The size of the maze. | 7 | `int` |
+|`max_keys`| The number of keys that can be collected in the level. | 2 | `int` |
 |`maxspeed`| Maximum speed of the player robot. | 0.75 | `float` |
 |`completion_bonus`| Reward received when the player completes the level. | 10. | `float` |
