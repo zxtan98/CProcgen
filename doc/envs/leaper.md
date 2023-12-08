@@ -19,10 +19,8 @@ Inspired by the classic game "Frogger", Leaper requires the player to cross seve
     "min_log_speed": .025,
     "max_log_speed": .075,
     "max_extra_space": 0,
-    "max_road": 3,
-    "min_road": 0,
-    "max_log": 3,
-    "min_log": 0,
+    "num_road_lanes": 2,
+    "num_log_lanes": 2,
     "car_left_prob": .5,
     "goal_reward": 10.,
     # Total: 13
@@ -39,9 +37,7 @@ Inspired by the classic game "Frogger", Leaper requires the player to cross seve
 |`min_log_speed`| Minimum speed of the logs. | 0.025 | `float` |
 |`max_log_speed`| Maximum speed of the logs. | 0.075 | `float` |
 |`max_extra_space`| Maximum extra space allowed. | 0 | `int` |
-|`max_road`| Maximum number of road lanes for cars | 3 | `int` |
-|`min_road`| Minimum number of road lanes for cars. | 0 | `int` |
-|`max_log`| Maximum number of water lanes for logs. | 3 | `int` |
-|`min_log`| Minimum number of water lanes for logs. | 0 | `int` |
+|`num_road_lanes`| Minimum number of road lanes for cars. | 2 | `int` |
+|`num_log_lanes`| Minimum number of water lanes for logs. | 2 | `int` |
 |`car_left_prob`| Probability of cars moving to the left. | 0.5 | `float` |
 |`goal_reward`| Reward received when the player reaches the finish line. | 10. | `float` |

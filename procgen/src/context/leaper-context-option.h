@@ -16,10 +16,12 @@ public:
 
     int max_extra_space;
 
-    int max_road;
-    int min_road;
-    int max_log;
-    int min_log;
+    // int max_road;
+    // int min_road;
+    // int max_log;
+    // int min_log;
+    int num_road_lanes;
+    int num_log_lanes;
 
     float car_left_prob;
 
