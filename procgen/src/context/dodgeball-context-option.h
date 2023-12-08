@@ -25,9 +25,9 @@ public:
     bool allow_top_exit;
     bool allow_bottom_exit;
 
-    int max_extra_enemies;
-    int base_num_enemies;
-
+    // int max_extra_enemies;
+    // int base_num_enemies;
+    int num_enemies;
 
     int fire_interval;
 

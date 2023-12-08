@@ -378,10 +378,11 @@ class DodgeballGame : public BasicAbstractGame {
 
         reposition_agent();
 
+        // num_enemies = rand_gen.randn(max_extra_enemies + 1) + dodgeball_context_option->base_num_enemies;
         num_enemies = rand_gen.randn(max_extra_enemies + 1) + dodgeball_context_option->base_num_enemies;
 
-        ((int32_t *) e_context.items[0].data)[0] = exit_wall_id;
-        ((int32_t *) e_context.items[1].data)[0] = num_enemies;
+        // ((int32_t *) e_context.items[0].data)[0] = exit_wall_id;
+        // ((int32_t *) e_context.items[1].data)[0] = num_enemies;
 
         spawn_entities(num_enemies, enemy_r, ENEMY, 0, 0, main_width, main_height);
 

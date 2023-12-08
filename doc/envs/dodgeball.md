@@ -23,8 +23,7 @@ Loosely inspired by the Atari game "Berzerk," Dodgeball is a game where the play
     "exit_r": 1.5,
     "enemy_speed": .05,
     "num_iterations": 2,
-    "max_extra_enemies": 3,
-    "base_num_enemies": 3,
+    "num_enemies": 4,
     "allow_left_exit": True,
     "allow_right_exit": True,
     "allow_top_exit": True,
@@ -48,8 +47,7 @@ Loosely inspired by the Atari game "Berzerk," Dodgeball is a game where the play
 |`exit_r`| Radius of the unlocked platform for level completion. | 1.5 | `float` |
 |`enemy_speed`| Speed of the enemies. | 0.05 | `float` |
 |`num_iterations`| The number of times rooms are subdivided, affecting the complexity and layout of the game map. | 2 | `int` |
-|`max_extra_enemies`| Maximum number of extra enemies that can be added. | 3 | `int` |
-|`base_num_enemies`| Base number of enemies in the game. | 3 | `int` |
+|`num_enemies`| The number of enemies in the game. | 4 | `int` |
 |`allow_left_exit`| Flag indicating whether left-side exit is allowed. | True | `bool` |
 |`allow_right_exit`| Flag indicating whether right-side exit is allowed. | True | `bool` |
 |`allow_top_exit`| Flag indicating whether top-side exit is allowed. | True | `bool` |

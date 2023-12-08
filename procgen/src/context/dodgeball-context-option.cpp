@@ -30,8 +30,9 @@ void DodgeballContextOption::parse_options(VecOptions *opts)
     opts->consume_bool("allow_top_exit", &allow_top_exit, true, true);
     opts->consume_bool("allow_bottom_exit", &allow_bottom_exit, true, true);
 
-    opts->consume_int("max_extra_enemies", &max_extra_enemies, true, 3); // The maximum number of extra enemies
-    opts->consume_int("base_num_enemies", &base_num_enemies, true, 3); // The number of base enemies. The sum of base_num_enemies and max_extra_enemies is the number of all enemies
+    // opts->consume_int("max_extra_enemies", &max_extra_enemies, true, 3); // The maximum number of extra enemies
+    // opts->consume_int("base_num_enemies", &base_num_enemies, true, 3); // The number of base enemies. The sum of base_num_enemies and max_extra_enemies is the number of all enemies
+    opts->consume_int("num_enemies", &num_enemies, true, 4); // The number of enemies
 
     opts->consume_float("completion_bonus", &completion_bonus, true, 10.0); // The bonus of completing the task
     opts->consume_int("max_episode_steps", &max_episode_steps, true, 1000);
@@ -57,26 +58,28 @@ void DodgeballContextOption::copy_options(DodgeballContextOption *opts)
     allow_top_exit = opts->allow_top_exit;
     allow_bottom_exit = opts->allow_bottom_exit;
 
-    max_extra_enemies = opts->max_extra_enemies;
-    base_num_enemies = opts->base_num_enemies;
+    // max_extra_enemies = opts->max_extra_enemies;
+    // base_num_enemies = opts->base_num_enemies;
+    num_enemies = opts->num_enemies;
+
     completion_bonus = opts->completion_bonus;
 
     max_episode_steps = opts->max_episode_steps;
 }
 
-void DodgeballContextOption::init_episode_context(struct libenv_options *e_context)
-{
-    int count_num = 2;
-    e_context->count = count_num;
-    e_context->items = new struct libenv_option[count_num];
+// void DodgeballContextOption::init_episode_context(struct libenv_options *e_context)
+// {
+//     int count_num = 2;
+//     e_context->count = count_num;
+//     e_context->items = new struct libenv_option[count_num];
 
-    strcpy(e_context->items[0].name, "exit_wall_id");
-    e_context->items[0].dtype = LIBENV_DTYPE_INT32;
-    e_context->items[0].count = 1;
-    e_context->items[0].data = new int32_t[1];
+//     strcpy(e_context->items[0].name, "exit_wall_id");
+//     e_context->items[0].dtype = LIBENV_DTYPE_INT32;
+//     e_context->items[0].count = 1;
+//     e_context->items[0].data = new int32_t[1];
 
-    strcpy(e_context->items[1].name, "num_enemies");
-    e_context->items[1].dtype = LIBENV_DTYPE_INT32;
-    e_context->items[1].count = 1;
-    e_context->items[1].data = new int32_t[1];
-}
+//     strcpy(e_context->items[1].name, "num_enemies");
+//     e_context->items[1].dtype = LIBENV_DTYPE_INT32;
+//     e_context->items[1].count = 1;
+//     e_context->items[1].data = new int32_t[1];
+// }
