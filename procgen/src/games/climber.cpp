@@ -172,23 +172,26 @@ class Climber : public BasicAbstractGame {
         // Due to the original game's design.
         // The number of platforms is determined by the difficulty.
         // In different difficulty, however, some numbers overlap.
-        int max_p = climber_context_option->max_platforms;
-        int min_p = climber_context_option->min_platforms;
 
-        int min_difficulty = ceil(sqrt(min_p))-1;
-        int max_difficulty = ceil(sqrt(max_p-1))-1;
-        max_difficulty = max_difficulty < 0 ? 0 : max_difficulty;
-        min_difficulty = min_difficulty > max_difficulty ? max_difficulty : min_difficulty;
-        // printf("min_difficulty: %d, max_difficulty: %d\n", min_difficulty, max_difficulty);
-        int difficulty = rand_gen.randn(max_difficulty - min_difficulty + 1) + min_difficulty;
+        // int max_p = climber_context_option->max_platforms;
+        // int min_p = climber_context_option->min_platforms;
+
+        // int min_difficulty = ceil(sqrt(min_p))-1;
+        // int max_difficulty = ceil(sqrt(max_p-1))-1;
+        // max_difficulty = max_difficulty < 0 ? 0 : max_difficulty;
+        // min_difficulty = min_difficulty > max_difficulty ? max_difficulty : min_difficulty;
+        // // printf("min_difficulty: %d, max_difficulty: %d\n", min_difficulty, max_difficulty);
+        // int difficulty = rand_gen.randn(max_difficulty - min_difficulty + 1) + min_difficulty;
         
-        int min_platforms = difficulty * difficulty + 1;
-        int max_platforms = (difficulty + 1) * (difficulty + 1) + 1;
-        max_platforms = max_platforms > max_p ? max_p : max_platforms;
-        min_platforms = min_platforms < min_p ? min_p : min_platforms;
-        int num_platforms = rand_gen.randn(max_platforms - min_platforms + 1) + min_platforms;
+        // int min_platforms = difficulty * difficulty + 1;
+        // int max_platforms = (difficulty + 1) * (difficulty + 1) + 1;
+        // max_platforms = max_platforms > max_p ? max_p : max_platforms;
+        // min_platforms = min_platforms < min_p ? min_p : min_platforms;
+        // int num_platforms = rand_gen.randn(max_platforms - min_platforms + 1) + min_platforms;
 
-        ((int32_t *)e_context.items[0].data)[0] = num_platforms;
+        int num_platforms = climber_context_option->num_platforms;
+
+        // ((int32_t *)e_context.items[0].data)[0] = num_platforms;
 
         // printf("Difficulty: %d, num_platforms: %d\n", difficulty, num_platforms);
 
@@ -249,7 +252,8 @@ class Climber : public BasicAbstractGame {
     void choose_world_dim() override {
         main_width = options.distribution_mode == EasyMode ? 16 : 20;
         main_width = climber_context_option->world_width;
-        main_height = climber_context_option->max_platforms < 10 ? 64: climber_context_option->max_platforms * 6;
+        // main_height = climber_context_option->max_platforms < 10 ? 64: climber_context_option->max_platforms * 6;
+        main_height = climber_context_option->num_platforms < 10 ? 64: climber_context_option->num_platforms * 6;
     }
 
     void game_reset() override {

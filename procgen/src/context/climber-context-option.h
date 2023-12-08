@@ -11,8 +11,9 @@ public:
     float air_control;
     float maxspeed;
 
-    int min_platforms; // The minimum number of platforms to generate. [1, 10]
-    int max_platforms; // The maximum number of platforms to generate. [1, 10]
+    // int min_platforms; // The minimum number of platforms to generate. [1, 10]
+    // int max_platforms; // The maximum number of platforms to generate. [1, 10]
+    int num_platforms; // The number of platforms to generate. [1, 10]
 
     float enemy_prob; // The probability of generating an enemy. [0, 1]
 

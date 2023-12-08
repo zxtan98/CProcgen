@@ -17,8 +17,9 @@ void ClimberContextOption::parse_options(VecOptions *opts)
     opts->consume_float("max_jump", &max_jump, true, 1.5);
     opts->consume_float("air_control", &air_control, true, 0.15);
     opts->consume_float("maxspeed", &maxspeed, true, 0.5);
-    opts->consume_int("min_platforms", &min_platforms, true, 1);
-    opts->consume_int("max_platforms", &max_platforms, true, 10);
+    // opts->consume_int("min_platforms", &min_platforms, true, 1);
+    // opts->consume_int("max_platforms", &max_platforms, true, 10);
+    opts->consume_int("num_platforms", &num_platforms, true, 5);
     opts->consume_float("enemy_prob", &enemy_prob, true, 0.3);
     opts->consume_float("coin_prob", &coin_prob, true, 0.5);
     opts->consume_int("max_plat_len", &max_plat_len, true, 11);
@@ -36,8 +37,9 @@ void ClimberContextOption::copy_options(ClimberContextOption *opts)
     max_jump = opts->max_jump;
     air_control = opts->air_control;
     maxspeed = opts->maxspeed;
-    min_platforms = opts->min_platforms;
-    max_platforms = opts->max_platforms;
+    // min_platforms = opts->min_platforms;
+    // max_platforms = opts->max_platforms;
+    num_platforms = opts->num_platforms;
     enemy_prob = opts->enemy_prob;
     coin_prob = opts->coin_prob;
     max_plat_len = opts->max_plat_len;
@@ -49,13 +51,13 @@ void ClimberContextOption::copy_options(ClimberContextOption *opts)
     max_episode_steps = opts->max_episode_steps;
 }
 
-void ClimberContextOption::init_episode_context(struct libenv_options *e_context){
-    int count_num = 1;
-    e_context->count = count_num;
-    e_context->items = new struct libenv_option[count_num];
+// void ClimberContextOption::init_episode_context(struct libenv_options *e_context){
+//     int count_num = 1;
+//     e_context->count = count_num;
+//     e_context->items = new struct libenv_option[count_num];
 
-    strcpy(e_context->items[0].name, "num_platforms");
-    e_context->items[0].dtype = LIBENV_DTYPE_INT32;
-    e_context->items[0].count = 1;
-    e_context->items[0].data = new int32_t[1];
-}
+//     strcpy(e_context->items[0].name, "num_platforms");
+//     e_context->items[0].dtype = LIBENV_DTYPE_INT32;
+//     e_context->items[0].count = 1;
+//     e_context->items[0].data = new int32_t[1];
+// }
