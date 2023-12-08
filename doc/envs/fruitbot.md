@@ -22,9 +22,8 @@ A scrolling game where the player controls a robot that must navigate between ga
     "door_prob": 0.125,
     "min_pct": 0.2,
     "min_fruits": 10,
-    "max_fruits": 19,
-    "min_foods": 10,
-    "max_foods": 19,
+    "num_fruits": 15,
+    "num_foods": 15,
     "completion_bonus": 10.0,
     "positive_reward": 1.0,
     "penalty": -4.0
@@ -44,10 +43,8 @@ A scrolling game where the player controls a robot that must navigate between ga
 |`buf_h`| The distance between the agent and the first wall.  | 4 | `int` |
 |`door_prob`| Probability of generating a door. | 0.125 | `float` |
 |`min_pct`| Minimum ratio of passage width to wall width. | 0.2 | `float` |
-|`min_fruits`| Minimum number of fruit objects in the game. | 10 | `int` |
-|`max_fruits`| Maximum number of fruit objects in the game. | 19 | `int` |
-|`min_foods`| Minimum number of non-fruit objects in the game. | 10 | `int` |
-|`max_foods`| Maximum number of non-fruit objects in the game. | 19 | `int` |
+|`num_fruits`| The number of fruit objects in the game. | 15 | `int` |
+|`num_foods`| The number of non-fruit objects in the game. | 15 | `int` |
 |`completion_bonus`| Reward received when the player finishes the game. | 10.0 | `float` |
 |`positive_reward`| Reward received when the player collects a fruit. | 1.0 | `float` |
 |`penalty`| Penalty received when the player collects a non-fruit object. | -4.0 | `float` |
