@@ -44,14 +44,9 @@ The player controls a small starship and must destroy a much bigger boss starshi
 |`player_bullet_vel`| Velocity of the player's projectiles. | 1 | `int` |
 |`bottom_margin`| Bottom margin for the barriers. | 6 | `int` |
 |`boss_bullet_vel`| Velocity of the boss's projectiles. | 0.5 | `float` |
-<!-- |`max_extra_invulnerable`| Maximum extra duration of boss invulnerability after each round. | 1 | `int` | -->
 |`invulnerable_time`| The duration of boss invulnerability after each round. | 2 | `int` |
 |`boss_vel_timeout`| Time interval for the boss to change direction. | 20 | `int` |
 |`boss_damage_timeout`| The time duration a boss remains vulnerable after being hit. | 40 | `int` |
-<!-- |`max_rounds_num`| Maximum number of rounds for the boss. | 5 | `int` |
-|`min_rounds_num`| Minimum number of rounds for the boss. | 1 | `int` |
-|`max_round_health`| Maximum health for each round of the boss. | 9 | `int` |
-|`min_round_health`| Minimum health for each round of the boss. | 1 | `int` | -->
 |`rounds_num`| The number of rounds for the boss. | 3 | `int` |
 |`round_health`| The health for each round of the boss. | 4 | `int` |
 |`enable_attack_mode_0`| Enables attack mode 0 for the boss. (Different attack modes include circular, star-shaped, and wave-shaped) | True | `bool` |
