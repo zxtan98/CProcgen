@@ -39,8 +39,9 @@ A simple platformer where the player must climb a sequence of platforms and coll
 |`max_jump`| Maximum height the player can jump. | 1.5 | `float` |
 |`air_control`| Control the player has while in mid-air. (Higher values allow more control.) | 0.15 | `float` |
 |`maxspeed`| Maximum horizontal speed of the player. | 0.5 | `float` |
-|`min_platforms`| Minimum number of platforms in the game. | 1 | `int` |
-|`max_platforms`| Maximum number of platforms in the game. | 10 | `int` |
+<!-- |`min_platforms`| Minimum number of platforms in the game. | 1 | `int` |
+|`max_platforms`| Maximum number of platforms in the game. | 10 | `int` | -->
+|`num_platforms`| The number of platforms in the game. | 5 | `int` |
 |`enemy_prob`| Probability of generating an enemy at each platform. | 0.3 | `float` |
 |`coin_prob`| Probability of generating a coin at each platform. | 0.5 | `float` |
 |`max_plat_len`| Maximum length of a platform. | 11 | `int` |
