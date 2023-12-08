@@ -15,10 +15,12 @@ class FruitbotContextOption {
     int buf_h;
     float door_prob;
     float min_pct;
-    int min_fruits;
-    int max_fruits;
-    int min_foods;
-    int max_foods;
+    // int min_fruits;
+    // int max_fruits;
+    // int min_foods;
+    // int max_foods;
+    int num_fruits;
+    int num_foods;
 
     float completion_bonus;
     float positive_reward;

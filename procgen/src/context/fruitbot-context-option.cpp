@@ -18,10 +18,12 @@ void FruitbotContextOption::parse_options(VecOptions *opts) {
     opts->consume_int("buf_h", &buf_h, true, 4);
     opts->consume_float("door_prob", &door_prob, true, .125);
     opts->consume_float("min_pct", &min_pct, true, .2); // If this value is high, the distance between two gate is big, thus aget need move more steps to get to the other gate.
-    opts->consume_int("min_fruits", &min_fruits, true, 10);
-    opts->consume_int("max_fruits", &max_fruits, true, 19);
-    opts->consume_int("min_foods", &min_foods, true, 10);
-    opts->consume_int("max_foods", &max_foods, true, 19);
+    // opts->consume_int("min_fruits", &min_fruits, true, 10);
+    // opts->consume_int("max_fruits", &max_fruits, true, 19);
+    // opts->consume_int("min_foods", &min_foods, true, 10);
+    // opts->consume_int("max_foods", &max_foods, true, 19);
+    opts->consume_int("num_fruits", &num_fruits, true, 15);
+    opts->consume_int("num_foods", &num_foods, true, 15);
 
     opts->consume_float("completion_bonus", &completion_bonus, true, 1.0);
     opts->consume_float("positive_reward", &positive_reward, true, 1.);
@@ -39,10 +41,12 @@ void FruitbotContextOption::copy_options(FruitbotContextOption *opts) {
     buf_h = opts->buf_h;
     door_prob = opts->door_prob;
     min_pct = opts->min_pct;
-    min_fruits = opts->min_fruits;
-    max_fruits = opts->max_fruits;
-    min_foods = opts->min_foods;
-    max_foods = opts->max_foods;
+    // min_fruits = opts->min_fruits;
+    // max_fruits = opts->max_fruits;
+    // min_foods = opts->min_foods;
+    // max_foods = opts->max_foods;
+    num_fruits = opts->num_fruits;
+    num_foods = opts->num_foods;
 
     completion_bonus = opts->completion_bonus;
     positive_reward = opts->positive_reward;
@@ -50,19 +54,19 @@ void FruitbotContextOption::copy_options(FruitbotContextOption *opts) {
     max_episode_steps = opts->max_episode_steps;
 }
 
-void FruitbotContextOption::init_episode_context(struct libenv_options *e_context)
-{
-    int count_num = 2;
-    e_context->count = count_num;
-    e_context->items = new struct libenv_option[count_num];
+// void FruitbotContextOption::init_episode_context(struct libenv_options *e_context)
+// {
+//     int count_num = 2;
+//     e_context->count = count_num;
+//     e_context->items = new struct libenv_option[count_num];
 
-    strcpy(e_context->items[0].name, "num_good");
-    e_context->items[0].dtype = LIBENV_DTYPE_INT32;
-    e_context->items[0].count = 1;
-    e_context->items[0].data = new int32_t[1];
+//     strcpy(e_context->items[0].name, "num_good");
+//     e_context->items[0].dtype = LIBENV_DTYPE_INT32;
+//     e_context->items[0].count = 1;
+//     e_context->items[0].data = new int32_t[1];
 
-    strcpy(e_context->items[1].name, "num_bad");
-    e_context->items[1].dtype = LIBENV_DTYPE_INT32;
-    e_context->items[1].count = 1;
-    e_context->items[1].data = new int32_t[1];
-}
+//     strcpy(e_context->items[1].name, "num_bad");
+//     e_context->items[1].dtype = LIBENV_DTYPE_INT32;
+//     e_context->items[1].count = 1;
+//     e_context->items[1].data = new int32_t[1];
+// }
