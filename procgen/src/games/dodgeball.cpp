@@ -324,7 +324,7 @@ class DodgeballGame : public BasicAbstractGame {
         maxspeed = dodgeball_context_option->maxspeed;
         exit_r = dodgeball_context_option->exit_r;
         num_iterations = dodgeball_context_option->num_iterations;
-        max_extra_enemies = dodgeball_context_option->max_extra_enemies;
+        // max_extra_enemies = dodgeball_context_option->max_extra_enemies;
 
         hard_min_dim = 4 * agent->rx + 2 * thickness + .5;
         min_dim = agent->rx * 8 + .5;
@@ -379,7 +379,7 @@ class DodgeballGame : public BasicAbstractGame {
         reposition_agent();
 
         // num_enemies = rand_gen.randn(max_extra_enemies + 1) + dodgeball_context_option->base_num_enemies;
-        num_enemies = rand_gen.randn(max_extra_enemies + 1) + dodgeball_context_option->base_num_enemies;
+        num_enemies = dodgeball_context_option->num_enemies;
 
         // ((int32_t *) e_context.items[0].data)[0] = exit_wall_id;
         // ((int32_t *) e_context.items[1].data)[0] = num_enemies;
