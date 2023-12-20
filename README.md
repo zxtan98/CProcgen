@@ -147,7 +147,7 @@ C-Procgen supports all 16 games in the original Procgen. For the available conte
 
 
 ## License
-The code in this repository are licensed under the MIT License for academic and other non-commercial uses. For commercial use of the code, separate commercial licensing is available. Please contact:
+The code in this repository is licensed under the MIT License for academic and other non-commercial uses. For commercial use of the code, separate commercial licensing is available. Please contact:
 - Zhenxiong Tan (zhenxiong@u.nus.edu.sg)
 - Kaixin Wang (kaixin96.wang@gmail.com)
 - Jonathan Tan (jonathan_tano@nus.edu.sg)
