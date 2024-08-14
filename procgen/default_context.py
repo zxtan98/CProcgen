@@ -1,6 +1,6 @@
 default_context_options = {
 "bigfish": {
-    "max_episode_steps": 1000,
+    "max_episode_steps": 6000,
     "start_r": 1.,
     "fish_prob": .1,
     "from_left_prob": .5,
@@ -155,7 +155,7 @@ default_context_options = {
         # Total: 8
     },
     "jumper": {
-        "max_episode_steps": 1000,
+        "max_episode_steps": 2000,
         "world_dim": 20,
         "visibility": 12,
         "compass_dim": 3,
@@ -165,7 +165,7 @@ default_context_options = {
         # Total: 7
     },
     "leaper": {
-        "max_episode_steps": 1000,
+        "max_episode_steps": 500,
         "world_dim": 9,
         "min_car_speed": .03,
         "max_car_speed": .12,
@@ -181,7 +181,7 @@ default_context_options = {
         # Total: 13
     },
     "maze": {
-        "max_episode_steps": 1000,
+        "max_episode_steps": 500,
         "world_dim": 15,
         "min_maze_dim": 3,
         "max_maze_dim": 15,
@@ -215,7 +215,7 @@ default_context_options = {
         # Total: 14
     },
     "plunder": {
-        "max_episode_steps": 1000,
+        "max_episode_steps": 4000,
         "target_time_reward": 0.1,
         "target_time_penalty": 0.1,
         "step_time_penalty": 0.0015,
